@@ -100,6 +100,8 @@ body{height:100vh;background:var(--bg);color:var(--text);font-family:'DM Sans',s
 .nm-btn{background:none;border:1px solid var(--border);border-radius:5px;font-size:0.75rem;padding:2px 5px;cursor:pointer;color:var(--muted);transition:color .15s,border-color .15s,background .15s;flex-shrink:0;line-height:1.4;}
 .nm-btn:hover{color:var(--teal);border-color:var(--teal);}
 .nm-btn.flagged{color:var(--teal);border-color:var(--teal);background:rgba(109,232,216,.1);}
+.nm-amt{border-color:rgba(109,232,216,.5)!important;color:var(--teal)!important;background:rgba(109,232,216,.05)!important;width:78px!important;}
+.nm-amt:focus{border-color:var(--teal)!important;}
 .del-bill-btn{background:none;border:none;color:var(--border);cursor:pointer;font-size:0.85rem;padding:2px;line-height:1;transition:color .15s;flex-shrink:0;}
 .del-bill-btn:hover{color:var(--danger);}
 .bills-foot{display:flex;justify-content:space-between;align-items:center;padding:9px 9px 0;border-top:1px solid var(--border);margin-top:6px;flex-shrink:0;}
@@ -356,7 +358,7 @@ body.privacy .money::after{content:attr(data-mask);color:var(--muted);position:a
 <div id="workspace">
   <div class="col">
     <div class="ph" onclick="togglePb('bills')"><div class="ph-title"><span class="ph-ico">📋</span> Bills &amp; Edit</div><span class="ph-chev up" id="chev-bills">▼</span></div>
-    <div class="sub-bar"><span class="sub-bar-lbl">Manage expenses</span><div class="add-btn" onclick="openModal()">＋ Add Bill</div></div>
+    <div class="sub-bar"><span class="sub-bar-lbl">Manage expenses</span><div style="display:flex;gap:6px;"><button class="nm-btn" id="nm-preview-btn" onclick="togglePreviewNextMonth()" style="font-size:0.65rem;padding:3px 9px;white-space:nowrap;">👁 Preview Next Mo</button><div class="add-btn" onclick="openModal()">＋ Add Bill</div></div></div>
     <div class="pb" id="pb-bills">
       <div id="bills-list"></div>
       <div class="bills-foot"><span class="bills-foot-lbl">Monthly Total</span><span class="bills-foot-val money" id="bills-total" data-mask="$#,###.##">—</span></div>
@@ -482,6 +484,8 @@ let ptaxBalance=5855.00;
 const PTAX_ORIGINAL=5855.00;
 let ptaxHistory=[],ptaxEditOpen=false;
 let nextMonthFlags=new Set();
+let NM_OVR={};        // next-month amount overrides: {billId: amount}
+let previewNextMonth=false; // are we viewing next month preview?
 let savingsGoals=[],sgid=2000;
 
 const SAV_CATS={
@@ -535,6 +539,7 @@ function buildSnapshot(){
     customBills:JSON.parse(JSON.stringify(customBills)),ptaxBalance,
     ptaxHistory:JSON.parse(JSON.stringify(ptaxHistory)),
     nextMonthFlags:[...nextMonthFlags],
+    NM_OVR:JSON.parse(JSON.stringify(NM_OVR)),
     savingsGoals:JSON.parse(JSON.stringify(savingsGoals))};
 }
 function applySnapshot(d,meta){
@@ -545,6 +550,7 @@ function applySnapshot(d,meta){
   if(typeof d.ptaxBalance==='number')ptaxBalance=d.ptaxBalance;
   if(d.ptaxHistory)ptaxHistory=d.ptaxHistory;
   if(d.nextMonthFlags)nextMonthFlags=new Set(d.nextMonthFlags);
+  if(d.NM_OVR)NM_OVR=d.NM_OVR;
   if(d.savingsGoals){savingsGoals=d.savingsGoals;sgid=Math.max(sgid,...savingsGoals.map(g=>parseInt(g.id.replace('sg',''))||0),sgid);}
   renderAll();renderSavings();
   if(meta&&meta.who&&meta.who!==currentUser)showToast(meta.who,meta.desc||'updated the app',meta.ts);
@@ -695,9 +701,60 @@ function syncPayViews(){
 /* ── NEXT MONTH FLAGS ── */
 function toggleNextMonth(id){
   const b=getAllBills().find(x=>x.id===id);
-  if(nextMonthFlags.has(id)){nextMonthFlags.delete(id);pushToFirebase('un-flagged '+(b?b.name:id)+' from next month');}
-  else{nextMonthFlags.add(id);pushToFirebase('flagged '+(b?b.name:id)+' for next month');}
+  if(nextMonthFlags.has(id)){
+    // Unflag: discard next-month amount, current month untouched
+    nextMonthFlags.delete(id);
+    delete NM_OVR[id];
+    pushToFirebase('un-flagged '+(b?b.name:id)+' from next month');
+  } else {
+    // Flag: seed next-month amount from current month amount
+    nextMonthFlags.add(id);
+    const bills=getBills(vy,vm);
+    const cur=bills.find(x=>x.id===id);
+    NM_OVR[id]=cur?parseFloat(cur.amt):0;
+    pushToFirebase('flagged '+(b?b.name:id)+' for next month');
+  }
   renderBills();
+}
+function handleNmEdit(id,val){
+  NM_OVR[id]=parseFloat(val)||0;
+  const b=getAllBills().find(x=>x.id===id);
+  pushToFirebase('set next-month '+(b?b.name:id)+' to '+fmt(NM_OVR[id]));
+  renderNextMonthPreview();
+}
+function togglePreviewNextMonth(){
+  previewNextMonth=!previewNextMonth;
+  const btn=document.getElementById('nm-preview-btn');
+  if(btn){
+    btn.textContent=previewNextMonth?'📅 Back to '+MONTHS[vm]:'👁 Preview '+MONTHS[new Date(vy,vm+1,1).getMonth()];
+    btn.classList.toggle('flagged',previewNextMonth);
+  }
+  renderBills();
+  // also update overview/income to reflect next month when previewing
+  if(previewNextMonth)renderNmOverview();else renderOverview();
+}
+function getNmBills(){
+  // Returns bills for next month: flagged bills use NM_OVR amounts, unflagged use current amounts
+  const nm=new Date(vy,vm+1,1);
+  const ny=nm.getFullYear(),nmo=nm.getMonth();
+  const bills=getBills(ny,nmo);
+  return bills.map(b=>({
+    ...b,
+    amt:nextMonthFlags.has(b.id)&&NM_OVR[b.id]!==undefined?NM_OVR[b.id]:b.amt
+  }));
+}
+function renderNmOverview(){
+  const bills=getNmBills(),total=bills.reduce((s,b)=>s+parseFloat(b.amt),0);
+  const inc=income.joe.monthly+income.beth.monthly,rem=inc-total;
+  setMoney('ov-income',inc);setMoney('ov-bills',total);
+  const el=document.getElementById('ov-remain');
+  el.textContent=fmt(rem);el.setAttribute('data-mask',fmtMask(rem));el.style.color=rem>=0?'var(--success)':'var(--danger)';
+  const pB=Math.min(100,(total/inc)*100),pI=100-pB;
+  const sI=document.getElementById('ivb-seg-income'),sB=document.getElementById('ivb-seg-bills');
+  if(sI)sI.style.flex=pI.toFixed(1);if(sB)sB.style.flex=pB.toFixed(1);
+  const iB=document.getElementById('ivb-bills'),iI=document.getElementById('ivb-income');
+  if(iB){iB.textContent=fmt(total);iB.setAttribute('data-mask',fmtMask(total));}
+  if(iI){iI.textContent=fmt(inc);iI.setAttribute('data-mask',fmtMask(inc));}
 }
 function renderNextMonthPreview(){
   const list=document.getElementById('nm-preview-list');
@@ -706,7 +763,7 @@ function renderNextMonthPreview(){
   const flagged=[...nextMonthFlags];
   if(flagged.length===0){preview.style.display='none';return;}
   preview.style.display='block';
-  count.textContent=flagged.length+' bill'+(flagged.length>1?'s':'');
+  count.textContent=flagged.length+' bill'+(flagged.length>1?'s':'')+' flagged';
   const bills=getBills(vy,vm);
   const nm=new Date(vy,vm+1,1);
   const nmStr=MONTHS[nm.getMonth()]+' '+nm.getFullYear();
@@ -714,14 +771,20 @@ function renderNextMonthPreview(){
   let total=0;
   flagged.forEach(id=>{
     const b=bills.find(x=>x.id===id);if(!b)return;
-    total+=parseFloat(b.amt);
+    const nmAmt=NM_OVR[id]!==undefined?NM_OVR[id]:b.amt;
+    const curAmt=parseFloat(b.amt);
+    const diff=nmAmt-curAmt;
+    total+=nmAmt;
+    const diffHtml=diff!==0?
+      ' <span style="font-size:0.6rem;color:'+(diff>0?'var(--danger)':'var(--success)')+'">('+(diff>0?'+':'')+fmt(diff)+')</span>':'';
     const item=document.createElement('div');item.className='nm-preview-item';
-    item.innerHTML='<div class="nm-preview-name"><span>'+b.icon+'</span><span>'+b.name+'</span></div><span class="nm-preview-amt money" data-mask="'+fmtMask(b.amt)+'">'+fmt(b.amt)+'</span>';
+    item.innerHTML='<div class="nm-preview-name"><span>'+(b.icon||'💸')+'</span><span>'+b.name+'</span></div>'+
+      '<span class="nm-preview-amt">'+fmt(nmAmt)+diffHtml+'</span>';
     list.appendChild(item);
   });
   const tot=document.createElement('div');tot.className='nm-preview-item';
   tot.style.cssText='font-weight:700;margin-top:4px;padding-top:6px;border-top:1px solid rgba(109,232,216,.2)';
-  tot.innerHTML='<div style="color:var(--teal)">Total to '+nmStr+'</div><span class="nm-preview-amt money" data-mask="'+fmtMask(total)+'" style="color:var(--teal)">'+fmt(total)+'</span>';
+  tot.innerHTML='<div style="color:var(--teal)">Total → '+nmStr+'</div><span style="color:var(--teal)">'+fmt(total)+'</span>';
   list.appendChild(tot);
 }
 
@@ -825,30 +888,54 @@ function renderOverview(){
   if(iI){iI.textContent=fmt(inc);iI.setAttribute('data-mask',fmtMask(inc));}
 }
 function renderBills(){
-  const bills=getBills(vy,vm),total=bills.reduce((s,b)=>s+parseFloat(b.amt),0);
+  const nm=new Date(vy,vm+1,1);
+  const nmLabel=MONTHS[nm.getMonth()]+' '+nm.getFullYear();
+  const bills=previewNextMonth?getNmBills():getBills(vy,vm);
+  const total=bills.reduce((s,b)=>s+parseFloat(b.amt),0);
   const list=document.getElementById('bills-list');list.innerHTML='';
+  if(previewNextMonth){
+    const banner=document.createElement('div');
+    banner.style.cssText='background:rgba(109,232,216,.08);border:1px solid rgba(109,232,216,.3);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-family:"DM Mono",monospace;font-size:0.65rem;color:var(--teal);display:flex;align-items:center;gap:8px;';
+    banner.innerHTML='<span>👁</span><span>Previewing <strong>'+nmLabel+'</strong> — flagged bills show next-month amounts.</span>';
+    list.appendChild(banner);
+  }
   const cats=[...new Set(bills.map(b=>b.cat))];
   cats.forEach(cat=>{
     const cb=bills.filter(b=>b.cat===cat);
     const isCC=cb.every(b=>b.custom);
     const lbl=document.createElement('div');lbl.className='cat-sec-lbl';
-    lbl.innerHTML='<span style="color:'+catColor(cat)+'">&#9679; '+cat+'</span>'+(isCC?'<button class="del-cat-btn" onclick="delCatBills(\''+cat+'\')">&#10005; remove all</button>':'');
+    lbl.innerHTML='<span style="color:'+catColor(cat)+'">&#9679; '+cat+'</span>'+(isCC&&!previewNextMonth?'<button class="del-cat-btn" onclick="delCatBills(\''+cat+'\')"  >&#10005; remove all</button>':'');
     list.appendChild(lbl);
     cb.forEach(b=>{
       const due=b.biwk?'Bi-weekly $'+b.biwkAmt+' each':(b.due?'Due '+b.due+ord(b.due)+' of month':'--');
       const flagged=nextMonthFlags.has(b.id);
-      const d=document.createElement('div');d.className='bill-row'+(flagged?' next-month-flagged':'');
-      d.innerHTML='<div class="bill-icon">'+(b.icon||'💸')+'</div>'+
-        '<div class="bill-info"><div class="bill-name">'+b.name+'</div><div class="bill-due">'+due+(flagged?' <span style="color:var(--teal);font-size:0.58rem">· next mo</span>':'')+'</div></div>'+
-        '<div class="bill-rhs">'+
-        '<input class="amt-input money" type="number" step="0.01" min="0" value="'+parseFloat(b.amt).toFixed(2)+'" data-id="'+b.id+'" data-mask="'+fmtMask(b.amt)+'" onchange="handleEdit(this)">'+
-        '<button class="nm-btn'+(flagged?' flagged':'')+'" onclick="toggleNextMonth(\''+b.id+'\')" title="'+(flagged?'Remove flag':'Flag for next month')+'">📬</button>'+
-        (b.custom?'<button class="del-bill-btn" onclick="delCustom(\''+b.id+'\')" title="Remove">&#10005;</button>':'')+
-        '</div>';
+      const curAmt=parseFloat(b.amt);
+      const nmAmt=NM_OVR[b.id]!==undefined?NM_OVR[b.id]:curAmt;
+      const d=document.createElement('div');
+      d.className='bill-row'+(flagged&&!previewNextMonth?' next-month-flagged':'');
+      let rhsHtml='<div class="bill-rhs">';
+      if(previewNextMonth){
+        const dispAmt=flagged?nmAmt:curAmt;
+        rhsHtml+='<input class="amt-input money'+(flagged?' nm-amt':'')+'" type="number" step="0.01" min="0" value="'+dispAmt.toFixed(2)+'" readonly style="opacity:'+(flagged?'1':'0.6')+';cursor:default;" title="'+(flagged?'Next-month amount':'Current amount (not flagged)')+'">';
+      } else {
+        rhsHtml+='<input class="amt-input money" type="number" step="0.01" min="0" value="'+curAmt.toFixed(2)+'" data-id="'+b.id+'" data-mask="'+fmtMask(curAmt)+'" onchange="handleEdit(this)" title="'+MONTHS[vm]+' amount">';
+        if(flagged){
+          rhsHtml+='<input class="amt-input nm-amt" type="number" step="0.01" min="0" value="'+nmAmt.toFixed(2)+'" title="'+nmLabel+' amount (editable)" onchange="handleNmEdit(\''+b.id+'\',this.value)">';
+        }
+        rhsHtml+='<button class="nm-btn'+(flagged?' flagged':'')+'" onclick="toggleNextMonth(\''+b.id+'\')" title="'+(flagged?'Unflag next month':'Flag for next month')+'">&#128236;</button>';
+        if(b.custom)rhsHtml+='<button class="del-bill-btn" onclick="delCustom(\''+b.id+'\')" title="Remove">&#10005;</button>';
+      }
+      rhsHtml+='</div>';
+      d.innerHTML='<div class="bill-icon">'+(b.icon||'&#128184;')+'</div>'+
+        '<div class="bill-info"><div class="bill-name">'+b.name+'</div>'+
+        '<div class="bill-due">'+due+(flagged&&!previewNextMonth?' <span style="color:var(--teal);font-size:0.58rem">&#8594; '+nmLabel+': '+fmt(nmAmt)+'</span>':'')+'</div></div>'+
+        rhsHtml;
       list.appendChild(d);
     });
   });
   const te=document.getElementById('bills-total');te.textContent=fmt(total);te.setAttribute('data-mask',fmtMask(total));
+  const footLbl=document.querySelector('.bills-foot-lbl');
+  if(footLbl)footLbl.textContent=previewNextMonth?nmLabel+' Total':'Monthly Total';
   renderNextMonthPreview();
 }
 function handleEdit(inp){
