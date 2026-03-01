@@ -614,7 +614,10 @@ function chooseUser(who){
   document.getElementById('user-avatar').textContent=who==='joe'?'💪':'💜';
   document.getElementById('user-name').textContent=who==='joe'?'Joe':'Beth';
   document.getElementById('user-name').style.color=who==='joe'?'var(--joe)':'var(--beth)';
-  initFirebase();applyFlagRolloverIfNeeded();renderAll();renderSavings();
+  try{initFirebase();}catch(e){console.error('Firebase init error:',e);}
+  try{applyFlagRolloverIfNeeded();}catch(e){console.error('Rollover error:',e);}
+  try{renderAll();}catch(e){console.error('renderAll error:',e);}
+  try{renderSavings();}catch(e){console.error('renderSavings error:',e);}
 }
 
 /* ── TABS ── */
@@ -1283,33 +1286,48 @@ function renderSavings(){
 
 /* ── PWA ── */
 (function(){
-  function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
-  function makePng(size,cb){
-    const c=document.createElement('canvas');c.width=c.height=size;
-    const ctx=c.getContext('2d'),s=size/192;
-    ctx.fillStyle='#12151f';roundRect(ctx,0,0,size,size,size*0.2);ctx.fill();
-    ctx.fillStyle='#1d2135';ctx.strokeStyle='#e8b86d';ctx.lineWidth=3*s;
-    ctx.beginPath();ctx.moveTo(96*s,28*s);ctx.lineTo(164*s,92*s);ctx.lineTo(154*s,92*s);ctx.lineTo(154*s,164*s);ctx.lineTo(114*s,164*s);ctx.lineTo(114*s,116*s);ctx.lineTo(78*s,116*s);ctx.lineTo(78*s,164*s);ctx.lineTo(38*s,164*s);ctx.lineTo(38*s,92*s);ctx.lineTo(28*s,92*s);ctx.closePath();ctx.fill();ctx.stroke();
-    ctx.fillStyle='#232740';roundRect(ctx,78*s,116*s,36*s,48*s,4*s);ctx.fill();
-    ctx.fillStyle='rgba(232,109,109,0.5)';roundRect(ctx,44*s,102*s,30*s,26*s,3*s);ctx.fill();
-    ctx.fillStyle='rgba(184,125,232,0.5)';roundRect(ctx,118*s,102*s,30*s,26*s,3*s);ctx.fill();
-    ctx.fillStyle='#0c0f18';ctx.strokeStyle='#e8b86d';ctx.lineWidth=2*s;
-    ctx.beginPath();ctx.arc(148*s,52*s,18*s,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle='#e8b86d';ctx.font=`bold ${14*s}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('$',148*s,53*s);
-    cb(c.toDataURL('image/png'));
-  }
-  makePng(192,function(png192){
-    document.getElementById('ati').href=png192;
-    makePng(512,function(png512){
-      const m={name:'Joe & Beth - House Budget',short_name:'House Budget',start_url:location.href,display:'standalone',background_color:'#0c0f18',theme_color:'#0c0f18',orientation:'portrait',icons:[{src:png192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:png512,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
-      document.getElementById('mfst').href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));
+  try{
+    function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+    function makePng(size,cb){
+      try{
+        const c=document.createElement('canvas');c.width=c.height=size;
+        const ctx=c.getContext('2d'),s=size/192;
+        ctx.fillStyle='#12151f';roundRect(ctx,0,0,size,size,size*0.2);ctx.fill();
+        ctx.fillStyle='#1d2135';ctx.strokeStyle='#e8b86d';ctx.lineWidth=3*s;
+        ctx.beginPath();ctx.moveTo(96*s,28*s);ctx.lineTo(164*s,92*s);ctx.lineTo(154*s,92*s);ctx.lineTo(154*s,164*s);ctx.lineTo(114*s,164*s);ctx.lineTo(114*s,116*s);ctx.lineTo(78*s,116*s);ctx.lineTo(78*s,164*s);ctx.lineTo(38*s,164*s);ctx.lineTo(38*s,92*s);ctx.lineTo(28*s,92*s);ctx.closePath();ctx.fill();ctx.stroke();
+        ctx.fillStyle='#232740';roundRect(ctx,78*s,116*s,36*s,48*s,4*s);ctx.fill();
+        ctx.fillStyle='rgba(232,109,109,0.5)';roundRect(ctx,44*s,102*s,30*s,26*s,3*s);ctx.fill();
+        ctx.fillStyle='rgba(184,125,232,0.5)';roundRect(ctx,118*s,102*s,30*s,26*s,3*s);ctx.fill();
+        ctx.fillStyle='#0c0f18';ctx.strokeStyle='#e8b86d';ctx.lineWidth=2*s;
+        ctx.beginPath();ctx.arc(148*s,52*s,18*s,0,Math.PI*2);ctx.fill();ctx.stroke();
+        ctx.fillStyle='#e8b86d';ctx.font='bold '+(14*s)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('$',148*s,53*s);
+        cb(c.toDataURL('image/png'));
+      }catch(e){cb(null);}
+    }
+    makePng(192,function(png192){
+      try{if(png192)document.getElementById('ati').href=png192;}catch(e){}
+      makePng(512,function(png512){
+        try{
+          const icons=[];
+          if(png192)icons.push({src:png192,sizes:'192x192',type:'image/png',purpose:'any maskable'});
+          if(png512)icons.push({src:png512,sizes:'512x512',type:'image/png',purpose:'any maskable'});
+          const m={name:'Joe & Beth - House Budget',short_name:'House Budget',start_url:location.href,display:'standalone',background_color:'#0c0f18',theme_color:'#0c0f18',orientation:'portrait',icons};
+          const blob=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
+          document.getElementById('mfst').href=URL.createObjectURL(blob);
+        }catch(e){}
+      });
     });
-  });
-  if('serviceWorker' in navigator){
-    const sw=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>self.clients.claim());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('Offline'))));`;
-    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'})),{scope:'./'}).catch(()=>{});
-  }
+    // Service worker — only register from https (not blob: URLs which are blocked)
+    if('serviceWorker' in navigator && location.protocol==='https:'){
+      try{
+        const sw=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>self.clients.claim());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('Offline'))));`;
+        const swBlob=new Blob([sw],{type:'application/javascript'});
+        const swUrl=URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl,{scope:'./'}).catch(()=>{});
+      }catch(e){}
+    }
+  }catch(e){}
 })();
 
 /* ── INIT ── */
