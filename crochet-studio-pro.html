@@ -1,0 +1,3650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bappy's Crochet Studio Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f1f12;
+  --parchment: #f4f0fa;
+  --warm: #e0d8f0;
+  --gold: #8b6bbf;
+  --rust: #1e4d2b;
+  --sage: #2e7d46;
+  --blush: #b39dcc;
+  --teal: #3d6b52;
+  --violet: #6a3fa0;
+  --border: #c0b8d8;
+  --card-bg: #faf7ff;
+  --forest: #163824;
+  --forest-mid: #1f4d30;
+  --forest-light: #2a6040;
+  --lavender-bright: #9b72d0;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--forest);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ---- HEADER ---- */
+.site-header {
+  background: var(--forest);
+  color: var(--parchment);
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid var(--forest-light);
+}
+.site-header::before {
+  content:'';
+  position:absolute; inset:0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(155,114,208,0.06) 20px, rgba(155,114,208,0.06) 40px);
+}
+.site-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1.05;
+  position: relative;
+}
+.site-header h1 span { color: var(--gold); font-style:italic; }
+.site-header p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  opacity: 0.65;
+  letter-spacing: 0.08em;
+  font-weight: 300;
+  position: relative;
+}
+
+/* ---- TABS ---- */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--forest-mid);
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--forest-light);
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.9rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(247,240,227,0.5);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--gold); }
+.tab-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  background: rgba(123,94,167,0.12);
+}
+
+/* ---- LAYOUT ---- */
+.main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeUp 0.35s ease; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ---- FORM STYLES ---- */
+.form-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+.form-section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+  color: var(--rust);
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2rem; }
+.span2 { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  color: #4a3a6a;
+}
+select, input[type=number], input[type=text] {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.6rem 0.8rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a6a5a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+select:focus, input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(123,94,167,0.15);
+}
+
+/* stitch category pills */
+.stitch-category {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+.cat-pill {
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--parchment);
+  color: #4a3a6a;
+  transition: all 0.15s;
+}
+.cat-pill.active { border-color: var(--violet); background: var(--violet); color: white; }
+.cat-pill:hover:not(.active) { border-color: var(--violet); color: var(--violet); }
+
+/* stitch grid */
+.stitch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.7rem;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 0.2rem;
+}
+.stitch-card {
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  padding: 0.7rem 0.8rem;
+  cursor: pointer;
+  background: var(--parchment);
+  transition: all 0.15s;
+}
+.stitch-card:hover { border-color: var(--violet); transform: translateY(-1px); }
+.stitch-card.selected { border-color: var(--violet); background: #f0ebfa; box-shadow: 0 2px 8px rgba(106,63,160,0.2); }
+.stitch-card .stitch-name { font-weight: 500; font-size: 0.88rem; color: var(--ink); }
+.stitch-card .stitch-abbr { font-size: 0.72rem; color: var(--violet); font-weight: 600; margin-top: 0.15rem; }
+.stitch-card .stitch-type { font-size: 0.68rem; color: #5a4a7a; margin-top: 0.1rem; }
+
+/* ---- STITCH VISUAL PREVIEW ---- */
+.stitch-preview-panel {
+  margin-top: 1.2rem;
+  background: var(--forest-mid);
+  border: 1px solid var(--forest-light);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  display: none;
+  animation: fadeUp 0.25s ease;
+  color: var(--parchment);
+}
+.stitch-preview-panel.visible { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+.stitch-preview-svg {
+  flex-shrink: 0;
+  background: var(--forest);
+  border-radius: 6px;
+  border: 1px solid rgba(155,114,208,0.25);
+  padding: 0.5rem;
+}
+.stitch-preview-svg svg { display: block; }
+.stitch-preview-info { flex: 1; min-width: 180px; }
+.stitch-preview-info h4 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  color: var(--lavender-bright);
+  margin-bottom: 0.4rem;
+  font-style: italic;
+}
+.stitch-preview-info .sp-abbr {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(155,114,208,0.75);
+  margin-bottom: 0.6rem;
+}
+.stitch-preview-info .sp-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(244,240,250,0.8);
+}
+.stitch-preview-info .sp-tip {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: rgba(155,114,208,0.85);
+  font-style: italic;
+}
+.stitch-preview-steps {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.sp-step {
+  font-size: 0.82rem;
+  color: rgba(244,240,250,0.75);
+  padding-left: 0.9rem;
+  position: relative;
+  line-height: 1.5;
+}
+.sp-step::before {
+  content: attr(data-n);
+  position: absolute; left: 0;
+  color: var(--lavender-bright);
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+
+/* ---- MULTI-ZONE COMPOSER ---- */
+.mode-toggle-wrap {
+  display: flex;
+  gap: 0;
+  background: rgba(0,0,0,0.15);
+  border-radius: 6px;
+  padding: 3px;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+}
+.mode-btn {
+  padding: 0.5rem 1.3rem;
+  border: none;
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(26,34,24,0.55);
+  transition: all 0.18s;
+  letter-spacing: 0.03em;
+}
+.mode-btn.active {
+  background: var(--violet);
+  color: white;
+  box-shadow: 0 1px 6px rgba(106,63,160,0.35);
+}
+.multi-zone-intro {
+  font-size: 0.88rem;
+  color: #4a4060;
+  margin: 1rem 0 1.2rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+.zone-diagram-wrap {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+.zone-diagram {
+  flex-shrink: 0;
+  background: var(--forest);
+  border: 1px solid rgba(155,114,208,0.25);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
+}
+.zone-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.15s;
+  background: rgba(255,255,255,0.04);
+}
+.zone-block:hover { border-color: rgba(155,114,208,0.5); background: rgba(155,114,208,0.08); }
+.zone-block.active-zone { border-color: var(--lavender-bright); background: rgba(155,114,208,0.15); }
+.zone-swatch { width: 20px; height: 20px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; }
+.zone-block-label { font-size: 0.78rem; color: rgba(244,240,250,0.75); font-weight: 500; }
+.zone-block-stitch { font-size: 0.68rem; color: rgba(155,114,208,0.8); margin-left: auto; }
+.zone-legend { flex: 1; min-width: 160px; }
+.zone-legend-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(26,34,24,0.5); font-weight: 600; margin-bottom: 0.6rem; }
+.zone-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 0.45rem; font-size: 0.82rem; color: #3a3050; }
+.legend-swatch { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+.zones-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.zone-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--forest);
+  border: 1.5px solid rgba(155,114,208,0.2);
+  border-radius: 6px;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.zone-row:hover, .zone-row.selected { border-color: var(--lavender-bright); background: rgba(155,114,208,0.1); }
+.zone-row-color { width: 18px; height: 18px; border-radius: 3px; flex-shrink: 0; }
+.zone-row-info { flex: 1; }
+.zone-row-name { font-size: 0.85rem; font-weight: 600; color: rgba(244,240,250,0.9); }
+.zone-row-stitch { font-size: 0.75rem; color: rgba(155,114,208,0.8); margin-top: 1px; }
+.zone-remove-btn {
+  background: none; border: none; color: rgba(244,240,250,0.3); cursor: pointer;
+  font-size: 1rem; padding: 0 4px; transition: color 0.15s;
+}
+.zone-remove-btn:hover { color: #d04060; }
+.add-zone-row { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.8rem; }
+.add-zone-btn {
+  padding: 0.55rem 1.1rem;
+  background: var(--rust); color: white; border: none; border-radius: 4px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: opacity 0.15s;
+}
+.add-zone-btn:hover { opacity: 0.85; }
+.composition-preview {
+  margin-top: 1.2rem; background: var(--forest);
+  border: 1px solid rgba(155,114,208,0.2); border-radius: 8px; padding: 1rem;
+}
+.comp-preview-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(155,114,208,0.7); font-weight: 600; margin-bottom: 0.8rem; }
+.comp-preview-zones { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.comp-zone-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0.35rem 0.75rem; border-radius: 20px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(155,114,208,0.25);
+}
+.comp-zone-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.comp-zone-text { font-size: 0.78rem; color: rgba(244,240,250,0.75); }
+.comp-zone-abbr { font-size: 0.72rem; color: rgba(155,114,208,0.7); font-weight: 600; margin-left: 2px; }
+#zoneStitchGrid .stitch-card { padding: 0.5rem 0.65rem; }
+#zoneStitchGrid .stitch-card .stitch-name { font-size: 0.8rem; }
+.meas-default-badge {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(46,125,70,0.5);
+  color: rgba(244,240,250,0.9);
+  padding: 1px 5px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+
+/* ---- SAVE PROJECT ---- */
+.save-project-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.project-name-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.55rem 0.9rem;
+  border-radius: 5px;
+  border: 1.5px solid rgba(155,114,208,0.4);
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.project-name-input::placeholder { color: rgba(255,255,255,0.4); }
+.project-name-input:focus { border-color: var(--lavender-bright); }
+.save-project-btn {
+  padding: 0.55rem 1.2rem;
+  background: rgba(155,114,208,0.25);
+  color: #c9a8f5;
+  border: 1.5px solid rgba(155,114,208,0.5);
+  border-radius: 5px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.save-project-btn:hover { background: rgba(155,114,208,0.45); border-color: var(--lavender-bright); }
+.save-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--violet);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(106,63,160,0.5);
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 999;
+  pointer-events: none;
+}
+.save-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---- PROJECTS TAB ---- */
+.projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.projects-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  font-style: italic;
+  color: var(--forest);
+  margin: 0 0 0.3rem;
+}
+.projects-subtitle { font-size: 0.88rem; color: rgba(26,34,24,0.55); margin: 0; }
+.new-project-btn {
+  padding: 0.65rem 1.4rem;
+  background: var(--violet);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.new-project-btn:hover { opacity: 0.85; }
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.2rem;
+}
+.projects-empty {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(155,114,208,0.05);
+  border: 2px dashed rgba(155,114,208,0.25);
+  border-radius: 10px;
+}
+.project-card {
+  background: var(--forest);
+  border: 1px solid rgba(155,114,208,0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.2s;
+  position: relative;
+}
+.project-card:hover { border-color: var(--lavender-bright); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+.project-card-img {
+  width: 100%;
+  height: 140px;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(155,114,208,0.2);
+}
+.project-card-img svg { width: 100%; height: 100%; }
+.project-card-img .no-img { font-size: 3rem; opacity: 0.4; }
+.project-card-body { padding: 1rem 1.1rem; }
+.project-card-name { font-size: 1rem; font-weight: 700; color: rgba(244,240,250,0.95); margin-bottom: 0.3rem; font-family: 'DM Serif Display', serif; font-style: italic; }
+.project-card-style { font-size: 0.78rem; color: rgba(155,114,208,0.8); margin-bottom: 0.6rem; font-weight: 500; }
+.project-card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.project-card-tag { font-size: 0.68rem; padding: 2px 8px; border-radius: 10px; background: rgba(155,114,208,0.15); color: rgba(200,170,240,0.85); border: 1px solid rgba(155,114,208,0.2); }
+.project-card-date { font-size: 0.7rem; color: rgba(244,240,250,0.3); }
+.project-card-actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid rgba(155,114,208,0.15); }
+.project-action-btn {
+  flex: 1; padding: 0.4rem 0.6rem; border-radius: 4px;
+  border: 1px solid rgba(155,114,208,0.3); background: rgba(155,114,208,0.1);
+  color: rgba(200,170,240,0.9); font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; text-align: center;
+}
+.project-action-btn:hover { background: rgba(155,114,208,0.25); }
+.project-action-btn.danger { color: rgba(220,120,120,0.8); border-color: rgba(220,120,120,0.25); }
+.project-action-btn.danger:hover { background: rgba(220,80,80,0.15); }
+
+.gen-btn {
+  width: 100%;
+  padding: 1.1rem;
+  background: linear-gradient(135deg, var(--rust), var(--violet));
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+  font-style: italic;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.gen-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+.gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.gen-btn.loading .spinner { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- OUTPUT ---- */
+.output-wrap {
+  margin-top: 2rem;
+  display: none;
+  animation: fadeUp 0.4s ease;
+}
+.output-wrap.visible { display: block; }
+
+.output-header {
+  background: linear-gradient(135deg, #0e2418 0%, #163824 60%, #1a3d28 100%);
+  color: #f4f0fa;
+  border-radius: 6px 6px 0 0;
+  padding: 2rem 2rem 1.75rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+  border: 1px solid rgba(155,114,208,0.3);
+  border-bottom: none;
+  position: relative;
+  overflow: hidden;
+}
+.output-header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(155,114,208,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.output-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.2rem;
+  font-style: italic;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.output-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.85rem; }
+.badge {
+  padding: 0.3rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.badge-gold   { background: rgba(255,210,100,0.18); color: #ffd664; border: 1px solid rgba(255,210,100,0.4); }
+.badge-sage   { background: rgba(100,210,130,0.15); color: #7dd4a0; border: 1px solid rgba(100,210,130,0.35); }
+.badge-teal   { background: rgba(100,200,220,0.15); color: #7ecfe0; border: 1px solid rgba(100,200,220,0.35); }
+.badge-violet { background: rgba(180,140,240,0.18); color: #c9a8f5; border: 1px solid rgba(180,140,240,0.4); }
+
+/* preview image */
+.preview-img-wrap {
+  width: 260px;
+  height: 260px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.25);
+  border: 2px solid rgba(155,114,208,0.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.preview-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.preview-img-wrap .img-placeholder {
+  font-size: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.preview-img-wrap .img-placeholder span { font-size: 0.7rem; opacity: 0.5; font-style: italic; color: #f4f0fa; }
+.img-loading-text { font-size: 0.72rem; color: rgba(200,180,240,0.7); text-align: center; margin-top: 0.6rem; font-style: italic; }
+
+.output-body {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 2rem;
+}
+
+.pattern-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+.psection { margin-bottom: 0; }
+.psection h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--rust);
+  margin-bottom: 0.7rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.psection h3::after { content:''; flex:1; height:1px; background: var(--border); }
+.psection p, .psection li { font-size: 0.95rem; line-height: 1.75; color: #3a2a1a; }
+.psection ul, .psection ol { padding-left: 1.3rem; }
+.psection li { margin-bottom: 0.25rem; }
+
+.row-block {
+  background: var(--warm);
+  border-left: 3px solid var(--rust);
+  border-radius: 0 4px 4px 0;
+  padding: 0.5rem 0.85rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.row-block strong { color: var(--violet); }
+
+.abbrev-box {
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  line-height: 2;
+  column-count: 2;
+  column-gap: 1.5rem;
+}
+
+.tunisian-note {
+  background: linear-gradient(135deg, #eaf3ed, #dff0e5);
+  border: 1px solid #9ecfb0;
+  border-radius: 5px;
+  padding: 1rem;
+  font-size: 0.88rem;
+  color: var(--rust);
+  margin-bottom: 1rem;
+}
+
+.mosaic-note {
+  background: linear-gradient(135deg, #f0ecf8, #e8e0f5);
+  border: 1px solid #b39dcc;
+  border-radius: 5px;
+  padding: 1rem;
+  font-size: 0.88rem;
+  color: var(--violet);
+  margin-bottom: 1rem;
+}
+
+.full-span { grid-column: 1 / -1; }
+
+.print-btn {
+  padding: 0.6rem 1.4rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #7a6a5a;
+  transition: all 0.15s;
+  margin-top: 1.2rem;
+}
+.print-btn:hover { background: var(--ink); color: white; border-color: var(--ink); }
+
+/* ---- STITCH LIBRARY TAB ---- */
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.lib-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.2rem;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.lib-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.lib-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.6rem;
+}
+.lib-card h3 { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: var(--ink); }
+.lib-card-type {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+.type-standard { background: #ede8f8; color: #5a3d9e; }
+.type-tunisian { background: #e0f2e9; color: #1b5e35; }
+.type-mosaic { background: #ede8f8; color: #6a3fa0; }
+.type-amigurumi { background: #fce4ec; color: #8b1a4a; }
+.type-specialty { background: #e8f5e9; color: #2d6e3a; }
+.lib-card p { font-size: 0.85rem; color: #5a4a3a; line-height: 1.65; }
+.lib-card .abbr-tag { font-size: 0.78rem; color: var(--rust); font-weight: 600; margin-bottom: 0.4rem; display: block; }
+
+/* amigurumi special */
+.amigurumi-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+.part-tag {
+  padding: 0.25rem 0.7rem;
+  background: #e8f5e9;
+  color: #2d6e3a;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+/* filter bar */
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+/* responsive */
+@media (max-width: 700px) {
+  .grid-2, .grid-3, .pattern-grid { grid-template-columns: 1fr; }
+  .output-header { grid-template-columns: 1fr; }
+  .preview-img-wrap { width: 100%; height: 260px; }
+  .abbrev-box { column-count: 1; }
+}
+
+@media print {
+  .site-header, .tab-bar, .form-section, .gen-btn, .print-btn, .tab-btn { display: none !important; }
+  .output-wrap { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>Bappy's Crochet <span>Studio</span> Pro</h1>
+  <p>Tunisian · Mosaic · Amigurumi · All Stitch Types · Custom Patterns</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('generator',this)">✦ Pattern Generator</button>
+  <button class="tab-btn" onclick="switchTab('library',this)">📖 Stitch Library</button>
+  <button class="tab-btn" onclick="switchTab('amigurumi',this)">🧸 Amigurumi</button>
+  <button class="tab-btn" onclick="switchTab('projects',this)" id="projectsTabBtn">📁 My Projects <span id="projectsCount" style="background:var(--violet);color:white;border-radius:10px;padding:1px 6px;font-size:0.65rem;margin-left:3px;display:none"></span></button>
+</div>
+
+<div class="main">
+
+<!-- ========== TAB: GENERATOR ========== -->
+<div id="tab-generator" class="tab-panel active">
+
+  <div class="form-section">
+    <div class="form-section-title">Project Details</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Clothing / Project Style</label>
+        <select id="style" onchange="updateMeasurements()">
+          <optgroup label="Wearables">
+            <option value="sweater">Sweater / Pullover</option>
+            <option value="cardigan">Cardigan</option>
+            <option value="vest">Vest</option>
+            <option value="top">Crop Top / Cami</option>
+            <option value="dress">Dress</option>
+            <option value="skirt">Skirt</option>
+          </optgroup>
+          <optgroup label="Accessories">
+            <option value="beanie">Beanie / Hat</option>
+            <option value="scarf">Scarf / Cowl</option>
+            <option value="shawl">Shawl / Triangle Wrap</option>
+            <option value="mittens">Mittens</option>
+            <option value="socks">Socks</option>
+            <option value="bag">Tote Bag</option>
+            <option value="headband">Headband / Ear Warmer</option>
+          </optgroup>
+          <optgroup label="Home & Decor">
+            <option value="blanket">Blanket / Throw</option>
+            <option value="dishcloth">Dishcloth / Washcloth</option>
+            <option value="pillow">Pillow Cover</option>
+            <option value="basket">Storage Basket</option>
+          </optgroup>
+          <optgroup label="Amigurumi">
+            <option value="amigurumi-bear">Build-a-Bear Style Teddy</option>
+            <option value="amigurumi-bunny">Bunny / Rabbit</option>
+            <option value="amigurumi-cat">Cat / Kitten</option>
+            <option value="amigurumi-elephant">Elephant</option>
+            <option value="amigurumi-dragon">Dragon / Fantasy Creature</option>
+            <option value="amigurumi-doll">Doll / Human Figure</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Size / Finished Dimensions</label>
+        <select id="size" onchange="updateMeasurements()">
+          <option value="XS">XS</option>
+          <option value="S">S</option>
+          <option value="M" selected>M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="2XL">2XL</option>
+          <option value="3XL">3XL</option>
+          <option value="custom">Custom measurements</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEASUREMENTS — always visible, pre-filled with size defaults -->
+  <div class="form-section" id="measureSection">
+    <div class="form-section-title">✦ Measurements <span style="font-size:0.75rem;font-weight:400;font-style:italic;opacity:0.6">— pre-filled from size chart, edit to customise</span></div>
+    <div class="grid-3" id="measureFields"></div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Yarn & Hook</div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Yarn Weight</label>
+        <select id="yarnWeight">
+          <option value="fingering">Fingering / Sock (#1)</option>
+          <option value="sport">Sport / Fine (#2)</option>
+          <option value="dk">DK / Light Worsted (#3)</option>
+          <option value="worsted" selected>Worsted (Medium #4)</option>
+          <option value="bulky">Bulky (#5)</option>
+          <option value="super-bulky">Super Bulky (#6)</option>
+          <option value="jumbo">Jumbo (#7)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Hook Size</label>
+        <select id="hookSize">
+          <option value="2.0mm">2.0mm (B/1)</option>
+          <option value="2.5mm">2.5mm (C/2)</option>
+          <option value="3.0mm">3.0mm (D/3)</option>
+          <option value="3.5mm">3.5mm (E/4)</option>
+          <option value="4.0mm">4.0mm (G/6)</option>
+          <option value="4.5mm">4.5mm (7)</option>
+          <option value="5.0mm" selected>5.0mm (H/8)</option>
+          <option value="5.5mm">5.5mm (I/9)</option>
+          <option value="6.0mm">6.0mm (J/10)</option>
+          <option value="6.5mm">6.5mm (K/10.5)</option>
+          <option value="8.0mm">8.0mm (L/11)</option>
+          <option value="9.0mm">9.0mm (M/13)</option>
+          <option value="10.0mm">10.0mm (N/15)</option>
+          <option value="12.0mm">12.0mm (P/16)</option>
+          <option value="15.0mm">15.0mm (Q)</option>
+          <option value="tunisian-9mm">Tunisian Hook 9mm</option>
+          <option value="tunisian-10mm">Tunisian Hook 10mm</option>
+          <option value="tunisian-12mm">Tunisian Hook 12mm</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Skill Level</label>
+        <select id="skillLevel">
+          <option value="beginner">Beginner</option>
+          <option value="easy" selected>Easy</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:1rem;">
+      <div class="field">
+        <label>Yarn Color 1</label>
+        <input type="text" id="color1" placeholder="e.g. Dusty Rose, #C89 or Cream">
+      </div>
+      <div class="field">
+        <label>Yarn Color 2 (for mosaic / colorwork)</label>
+        <input type="text" id="color2" placeholder="e.g. Forest Green, Navy">
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTI-ZONE STITCH COMPOSER -->
+  <div class="form-section" id="stitchComposerSection">
+    <div class="form-section-title">✦ Stitch Composition</div>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle-wrap">
+      <button class="mode-btn active" id="modeBtnSingle" onclick="setComposerMode('single',this)">Single Stitch</button>
+      <button class="mode-btn" id="modeBtnMulti" onclick="setComposerMode('multi',this)">Multi-Zone Pattern</button>
+    </div>
+
+    <!-- SINGLE MODE -->
+    <div id="singleMode">
+      <div style="margin-bottom:0.7rem;margin-top:1rem">
+        <label>Filter by type:</label>
+        <div class="stitch-category" style="margin-top:0.4rem">
+          <span class="cat-pill active" onclick="filterStitches('all',this)">All</span>
+          <span class="cat-pill" onclick="filterStitches('standard',this)">Standard</span>
+          <span class="cat-pill" onclick="filterStitches('tunisian',this)">Tunisian</span>
+          <span class="cat-pill" onclick="filterStitches('mosaic',this)">Mosaic</span>
+          <span class="cat-pill" onclick="filterStitches('specialty',this)">Specialty</span>
+          <span class="cat-pill" onclick="filterStitches('textured',this)">Textured</span>
+          <span class="cat-pill" onclick="filterStitches('colorwork',this)">Colorwork</span>
+        </div>
+      </div>
+      <div class="stitch-grid" id="stitchGrid"></div>
+      <div id="selectedStitchName" style="margin-top:0.8rem;font-size:0.85rem;color:var(--sage);font-weight:500;">✓ Selected: Double Crochet (dc)</div>
+      <div class="stitch-preview-panel" id="stitchPreviewPanel"></div>
+    </div>
+
+    <!-- MULTI ZONE MODE -->
+    <div id="multiMode" style="display:none">
+      <div class="multi-zone-intro">
+        Assign a different stitch to each section of your project. Click a zone to choose its stitch, then pick from the stitch picker below.
+      </div>
+
+      <!-- Zone diagram -->
+      <div class="zone-diagram-wrap">
+        <div class="zone-diagram" id="zoneDiagram">
+          <!-- populated by JS based on style -->
+        </div>
+        <div class="zone-legend" id="zoneLegend"></div>
+      </div>
+
+      <!-- Assigned zones list -->
+      <div class="zones-list" id="zonesList"></div>
+
+      <!-- Add custom zone -->
+      <div class="add-zone-row">
+        <select id="newZoneName" style="flex:1;">
+          <!-- populated by JS -->
+        </select>
+        <button class="add-zone-btn" onclick="addZone()">+ Add Zone</button>
+      </div>
+
+      <!-- Stitch picker for zones -->
+      <div style="margin-top:1.2rem">
+        <div style="font-size:0.8rem;font-weight:500;color:rgba(244,240,250,0.6);margin-bottom:0.5rem;letter-spacing:0.06em;text-transform:uppercase;" id="zonePickerLabel">
+          Select a zone above, then pick its stitch:
+        </div>
+        <div style="margin-bottom:0.6rem">
+          <div class="stitch-category">
+            <span class="cat-pill active" onclick="filterZoneStitches('all',this)">All</span>
+            <span class="cat-pill" onclick="filterZoneStitches('standard',this)">Standard</span>
+            <span class="cat-pill" onclick="filterZoneStitches('tunisian',this)">Tunisian</span>
+            <span class="cat-pill" onclick="filterZoneStitches('mosaic',this)">Mosaic</span>
+            <span class="cat-pill" onclick="filterZoneStitches('specialty',this)">Specialty</span>
+            <span class="cat-pill" onclick="filterZoneStitches('textured',this)">Textured</span>
+            <span class="cat-pill" onclick="filterZoneStitches('colorwork',this)">Colorwork</span>
+          </div>
+        </div>
+        <div class="stitch-grid" id="zoneStitchGrid" style="max-height:220px;"></div>
+      </div>
+
+      <!-- Live preview of composition -->
+      <div class="composition-preview" id="compositionPreview" style="display:none">
+        <div class="comp-preview-title">✦ Your Stitch Composition</div>
+        <div class="comp-preview-zones" id="compPreviewZones"></div>
+      </div>
+
+      <div class="stitch-preview-panel" id="stitchPreviewPanel" style="display:none"></div>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="genBtn" onclick="generatePattern()">
+    <div class="spinner" id="genSpinner"></div>
+    ✦ Generate Pattern & Preview Image
+  </button>
+
+  <div class="output-wrap" id="outputWrap">
+    <div class="output-header" id="outputHeader">
+      <div>
+        <div class="output-title" id="outputTitle"></div>
+        <div class="output-meta" id="outputMeta"></div>
+        <div class="save-project-row" id="saveProjectRow">
+          <input type="text" id="projectNameInput" placeholder="Name this project…" class="project-name-input">
+          <button class="save-project-btn" onclick="saveProject()">💾 Save Project</button>
+        </div>
+      </div>
+      <div>
+        <div class="preview-img-wrap" id="imgWrap">
+          <div class="img-placeholder">🧶<span>Generating…</span></div>
+        </div>
+        <div class="img-loading-text" id="imgLoadingText">AI preview loading…</div>
+      </div>
+    </div>
+    <div class="output-body" id="outputBody"></div>
+    <div style="display:flex;gap:0.8rem;flex-wrap:wrap;padding:1rem 1.5rem 1.5rem;">
+      <button class="print-btn" onclick="window.print()">⎙ Print this Pattern</button>
+      <button class="print-btn" style="background:var(--violet);color:white;border-color:var(--violet);" onclick="saveProject()">💾 Save to My Projects</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== TAB: STITCH LIBRARY ========== -->
+<div id="tab-library" class="tab-panel">
+  <div class="filter-bar" id="libFilterBar">
+    <span class="cat-pill active" onclick="filterLib('all',this)">All Stitches</span>
+    <span class="cat-pill" onclick="filterLib('standard',this)">Standard</span>
+    <span class="cat-pill" onclick="filterLib('tunisian',this)">Tunisian</span>
+    <span class="cat-pill" onclick="filterLib('mosaic',this)">Mosaic</span>
+    <span class="cat-pill" onclick="filterLib('specialty',this)">Specialty</span>
+    <span class="cat-pill" onclick="filterLib('textured',this)">Textured</span>
+    <span class="cat-pill" onclick="filterLib('colorwork',this)">Colorwork</span>
+  </div>
+  <div class="lib-grid" id="libGrid"></div>
+</div>
+
+<!-- ========== TAB: AMIGURUMI ========== -->
+<div id="tab-amigurumi" class="tab-panel">
+  <div class="form-section">
+    <div class="form-section-title">Build-a-Bear Style Amigurumi Generator</div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Animal / Character</label>
+        <select id="amiStyle">
+          <option value="bear">Teddy Bear</option>
+          <option value="bunny">Bunny</option>
+          <option value="cat">Cat</option>
+          <option value="elephant">Elephant</option>
+          <option value="dinosaur">Dinosaur</option>
+          <option value="dragon">Dragon</option>
+          <option value="doll">Rag Doll</option>
+          <option value="fox">Fox</option>
+          <option value="penguin">Penguin</option>
+          <option value="octopus">Octopus</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Finished Size</label>
+        <select id="amiSize">
+          <option value="mini">Mini (4")</option>
+          <option value="small">Small (6")</option>
+          <option value="medium" selected>Medium (10")</option>
+          <option value="large">Large (14")</option>
+          <option value="giant">Giant (20"+ Build-a-Bear)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Yarn Weight</label>
+        <select id="amiYarn">
+          <option value="fingering">Fingering (tiny detail)</option>
+          <option value="dk">DK (good detail)</option>
+          <option value="worsted" selected>Worsted (standard)</option>
+          <option value="bulky">Bulky (quick & chunky)</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:1rem">
+      <div class="field">
+        <label>Main Color</label>
+        <input type="text" id="amiColor1" placeholder="e.g. Caramel Brown">
+      </div>
+      <div class="field">
+        <label>Accent Color</label>
+        <input type="text" id="amiColor2" placeholder="e.g. Cream / Blush Pink">
+      </div>
+    </div>
+  </div>
+  <button class="gen-btn" id="amiBtn" onclick="generateAmigurumi()">
+    <div class="spinner" id="amiSpinner"></div>
+    🧸 Generate Amigurumi Pattern & Preview
+  </button>
+  <div class="output-wrap" id="amiOutputWrap">
+    <div class="output-header" id="amiOutputHeader">
+      <div>
+        <div class="output-title" id="amiTitle"></div>
+        <div class="output-meta" id="amiMeta"></div>
+      </div>
+      <div>
+        <div class="preview-img-wrap" id="amiImgWrap">
+          <div class="img-placeholder">🧸<span>Generating…</span></div>
+        </div>
+        <div class="img-loading-text" id="amiImgText">AI preview loading…</div>
+      </div>
+    </div>
+    <div class="output-body" id="amiBody"></div>
+    <button class="print-btn" onclick="window.print()">⎙ Print Pattern</button>
+  </div>
+</div>
+
+<!-- ========== TAB: MY PROJECTS ========== -->
+<div id="tab-projects" class="tab-panel">
+  <div class="projects-header">
+    <div>
+      <h2 class="projects-title">My Projects</h2>
+      <p class="projects-subtitle">All your saved patterns in one place. Click any project to reload it.</p>
+    </div>
+    <button class="new-project-btn" onclick="switchTab('generator', document.querySelector('.tab-btn'))">+ New Pattern</button>
+  </div>
+  <div id="projectsGrid" class="projects-grid">
+    <div class="projects-empty" id="projectsEmpty">
+      <div style="font-size:3rem;margin-bottom:1rem">🧶</div>
+      <div style="font-size:1.1rem;font-weight:600;color:#3a3050;margin-bottom:0.5rem">No saved projects yet</div>
+      <div style="font-size:0.9rem;color:rgba(26,34,24,0.5)">Generate a pattern, then click "Save Project" to keep it here</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ==================== STITCH DATABASE ====================
+const STITCHES = [
+  // STANDARD
+  {id:'sl-st', name:'Slip Stitch', abbr:'sl st', type:'standard', cat:'standard', gauge:0, desc:'Joining stitch; no height. Used for joining rounds.'},
+  {id:'ch', name:'Chain', abbr:'ch', type:'standard', cat:'standard', gauge:0, desc:'Foundation for all crochet. Creates the starting row.'},
+  {id:'sc', name:'Single Crochet', abbr:'sc', type:'standard', cat:'standard', gauge:14, rowGauge:16, desc:'Short, tight stitch. Dense fabric, ideal for bags, amigurumi.'},
+  {id:'hdc', name:'Half Double Crochet', abbr:'hdc', type:'standard', cat:'standard', gauge:11, rowGauge:12, desc:'Between sc and dc. Soft drape, good for hats & garments.'},
+  {id:'dc', name:'Double Crochet', abbr:'dc', type:'standard', cat:'standard', gauge:9, rowGauge:5, desc:'Tall, versatile stitch. Standard for most garment patterns.'},
+  {id:'tr', name:'Treble Crochet', abbr:'tr', type:'standard', cat:'standard', gauge:7, rowGauge:4, desc:'Very tall stitch, creates lacy, open fabric.'},
+  {id:'dtr', name:'Double Treble', abbr:'dtr', type:'standard', cat:'standard', gauge:6, rowGauge:3, desc:'Extra-tall stitch for lacework and fans.'},
+  {id:'sc-blo', name:'SC Through Back Loop', abbr:'sc-blo', type:'standard', cat:'standard', gauge:14, rowGauge:16, desc:'SC worked in back loop only — creates ribbing texture.'},
+  {id:'dc-blo', name:'DC Through Back Loop', abbr:'dc-blo', type:'standard', cat:'standard', gauge:9, rowGauge:5, desc:'DC in BLO — flexible ribbing for cuffs and bands.'},
+
+  // SPECIALTY / TEXTURED
+  {id:'shell', name:'Shell Stitch', abbr:'shell', type:'specialty', cat:'textured', gauge:8, rowGauge:4, desc:'Fan of 5dc in one st. Creates scalloped, decorative edge.'},
+  {id:'v-stitch', name:'V-Stitch', abbr:'v-st', type:'specialty', cat:'textured', gauge:8, rowGauge:4, desc:'(dc, ch1, dc) in same st. Open, lacy, elegant look.'},
+  {id:'puff', name:'Puff Stitch', abbr:'puff', type:'specialty', cat:'textured', gauge:8, rowGauge:5, desc:'Multiple partial hdc pulled together. Soft raised bobble.'},
+  {id:'bobble', name:'Bobble Stitch', abbr:'bob', type:'specialty', cat:'textured', gauge:7, rowGauge:5, desc:'5 partial dc worked together. Firm, protruding ball texture.'},
+  {id:'popcorn', name:'Popcorn Stitch', abbr:'pc', type:'specialty', cat:'textured', gauge:7, rowGauge:5, desc:'5dc in one st, dropped and rejoined. Bold 3D bump.'},
+  {id:'spike', name:'Spike Stitch', abbr:'spike', type:'specialty', cat:'colorwork', gauge:10, rowGauge:10, desc:'SC inserting hook one or more rows below. Creates diagonal lines.'},
+  {id:'interlocking-rings', name:'Linking Rings / Josephine Stitch', abbr:'josephine', type:'specialty', cat:'specialty', gauge:6, rowGauge:4, desc:'Circular loops linked together for a chain-mail effect.'},
+  {id:'broomstick', name:'Broomstick Lace', abbr:'broomstick', type:'specialty', cat:'specialty', gauge:6, rowGauge:3, desc:'Loops pulled over a dowel then worked in groups. Distinctive eyelet bands.'},
+  {id:'hairpin', name:'Hairpin Lace', abbr:'hairpin', type:'specialty', cat:'specialty', gauge:5, rowGauge:3, desc:'Worked on a hairpin loom. Creates delicate strips of loops.'},
+  {id:'crocodile', name:'Crocodile Scale Stitch', abbr:'croc', type:'specialty', cat:'specialty', gauge:6, rowGauge:4, desc:'DC fans folded to create overlapping scales. 3D texture.'},
+  {id:'star', name:'Star Stitch', abbr:'star', type:'specialty', cat:'textured', gauge:8, rowGauge:5, desc:'5 loops pulled together into a star shape. Dense and decorative.'},
+  {id:'waffle', name:'Waffle Stitch', abbr:'waffle', type:'specialty', cat:'textured', gauge:8, rowGauge:6, desc:'Alternating dc and fpdc/bpdc creates a grid texture.'},
+  {id:'lemon-peel', name:'Lemon Peel Stitch', abbr:'lemon', type:'specialty', cat:'textured', gauge:10, rowGauge:10, desc:'Alternating sc and dc across rows. Subtle pebbly texture.'},
+  {id:'catherine-wheel', name:'Catherine Wheel', abbr:'cath', type:'specialty', cat:'specialty', gauge:7, rowGauge:4, desc:'Alternating fans and sc clusters. Creates a starburst pattern.'},
+  {id:'larks-head', name:"Lark's Head Knot", abbr:'lh', type:'specialty', cat:'specialty', gauge:0, desc:"Joining technique; used in macramé-style crochet and fringe."},
+  {id:'granny', name:'Granny Square', abbr:'granny', type:'specialty', cat:'colorwork', gauge:8, rowGauge:5, desc:'Classic worked-in-rounds square of dc clusters and ch spaces.'},
+  {id:'pinwheel', name:'Pinwheel Granny', abbr:'pinwheel', type:'specialty', cat:'specialty', gauge:8, rowGauge:5, desc:'Diagonal dc arms radiating from center. Swirling effect.'},
+  {id:'corner2corner', name:'Corner-to-Corner (C2C)', abbr:'c2c', type:'specialty', cat:'colorwork', gauge:8, rowGauge:5, desc:'Diagonal squares worked from corner to corner. Great for pixel art.'},
+  {id:'tapestry', name:'Tapestry / Intarsia', abbr:'tapestry', type:'specialty', cat:'colorwork', gauge:12, rowGauge:14, desc:'Carrying multiple yarn colors to create images or geometric patterns.'},
+  {id:'overlay-mosaic', name:'Overlay Mosaic Crochet', abbr:'overlay-mosaic', type:'specialty', cat:'mosaic', gauge:9, rowGauge:6, desc:'Spike stitches worked over the front, keeping second color at back. Bold patterns.'},
+  {id:'inset-mosaic', name:'Inset Mosaic Crochet', abbr:'inset-mosaic', type:'specialty', cat:'mosaic', gauge:9, rowGauge:6, desc:'Second color carried behind; single crochet pattern on one side only.'},
+  
+  // TUNISIAN
+  {id:'tss', name:'Tunisian Simple Stitch', abbr:'Tss', type:'tunisian', cat:'tunisian', gauge:10, rowGauge:8, desc:'Foundation of Tunisian. Pick up loops forward, return pass. Creates a knit-like grid.'},
+  {id:'tks', name:'Tunisian Knit Stitch', abbr:'Tks', type:'tunisian', cat:'tunisian', gauge:10, rowGauge:8, desc:'Insert through center of vertical bar. Looks identical to knitting!'},
+  {id:'tps', name:'Tunisian Purl Stitch', abbr:'Tps', type:'tunisian', cat:'tunisian', gauge:10, rowGauge:8, desc:'Yarn forward before inserting hook. Creates purl bumps.'},
+  {id:'tfs', name:'Tunisian Full Stitch', abbr:'Tfs', type:'tunisian', cat:'tunisian', gauge:9, rowGauge:8, desc:'Insert through both vertical bars. Very dense, firm fabric.'},
+  {id:'tesm', name:'Tunisian Extended Simple', abbr:'Tesm', type:'tunisian', cat:'tunisian', gauge:9, rowGauge:7, desc:'Chain added before completing each loop. Stretchy, drapey fabric.'},
+  {id:'tws', name:'Tunisian Twisted Stitch', abbr:'Tws', type:'tunisian', cat:'tunisian', gauge:10, rowGauge:8, desc:'Hook twisted before pickup. Adds a slight cable-look texture.'},
+  {id:'tss-color', name:'Tunisian Colorwork', abbr:'T-color', type:'tunisian', cat:'tunisian', gauge:9, rowGauge:8, desc:'Color changes on the forward pass — creates stranded patterns, checks, and motifs.'},
+  {id:'tunisian-smock', name:'Tunisian Smocking', abbr:'T-smock', type:'tunisian', cat:'tunisian', gauge:8, rowGauge:7, desc:'Gathered columns on a Tss base. Creates a honeycomb or diamond smocked look.'},
+  {id:'tunisian-rib', name:'Tunisian Rib (Tss/Tps)', abbr:'T-rib', type:'tunisian', cat:'tunisian', gauge:10, rowGauge:9, desc:'Alternating Tss and Tps columns. Creates a classic ribbed fabric.'},
+  {id:'tunisian-entrelac', name:'Tunisian Entrelac', abbr:'T-entrelac', type:'tunisian', cat:'tunisian', gauge:8, rowGauge:6, desc:'Interlocking squares in Tunisian. Complex woven-basket appearance.'},
+  
+  // MOSAIC SPECIFIC
+  {id:'mosaic-granny', name:'Mosaic Granny', abbr:'mos-granny', type:'specialty', cat:'mosaic', gauge:7, rowGauge:5, desc:'Two-color granny squares using mosaic techniques. Only one color per round.'},
+  {id:'woven-mosaic', name:'Woven / Viking Weave Mosaic', abbr:'woven-mos', type:'specialty', cat:'mosaic', gauge:8, rowGauge:6, desc:'Slip stitches create a woven-fabric illusion with two colors.'},
+  {id:'bavarian', name:'Bavarian Stitch', abbr:'bav', type:'specialty', cat:'mosaic', gauge:7, rowGauge:5, desc:'Raised dc groups in rounds; worked in segments for colorblock squares.'},
+  {id:'planned-pooling', name:'Planned Color Pooling', abbr:'pool', type:'specialty', cat:'colorwork', gauge:9, rowGauge:9, desc:'Matching yarn repeats precisely to chain count to create argyle or plaid effects.'},
+];
+
+let selectedStitch = 'dc';
+let composerMode = 'single'; // 'single' | 'multi'
+let activeZoneIndex = null;
+
+// ========== ZONE DEFINITIONS PER STYLE ==========
+const ZONE_DEFS = {
+  sweater:   [{id:'body',label:'Body / Torso',icon:'⬜',pct:40},{id:'yoke',label:'Yoke / Shoulders',icon:'▲',pct:15},{id:'sleeves',label:'Sleeves',icon:'▷',pct:25},{id:'cuffs',label:'Cuffs',icon:'▬',pct:5},{id:'hem',label:'Hem / Bottom Band',icon:'▬',pct:5},{id:'neckband',label:'Neckband',icon:'◯',pct:5},{id:'border',label:'Edge Border',icon:'⬚',pct:5}],
+  cardigan:  [{id:'body',label:'Body / Torso',icon:'⬜',pct:35},{id:'yoke',label:'Yoke / Shoulders',icon:'▲',pct:15},{id:'sleeves',label:'Sleeves',icon:'▷',pct:25},{id:'button-band',label:'Button Band',icon:'┊',pct:5},{id:'cuffs',label:'Cuffs',icon:'▬',pct:5},{id:'hem',label:'Hem Band',icon:'▬',pct:5},{id:'neckband',label:'Neckband',icon:'◯',pct:5},{id:'border',label:'Edge Border',icon:'⬚',pct:5}],
+  vest:      [{id:'body',label:'Body / Torso',icon:'⬜',pct:60},{id:'yoke',label:'Yoke / Armhole',icon:'▲',pct:15},{id:'hem',label:'Hem Band',icon:'▬',pct:10},{id:'neckband',label:'Neckband',icon:'◯',pct:10},{id:'border',label:'Edge Border',icon:'⬚',pct:5}],
+  top:       [{id:'body',label:'Body',icon:'⬜',pct:70},{id:'straps',label:'Straps',icon:'↑',pct:15},{id:'hem',label:'Hem / Trim',icon:'▬',pct:10},{id:'border',label:'Edge Border',icon:'⬚',pct:5}],
+  dress:     [{id:'bodice',label:'Bodice (top)',icon:'⬜',pct:30},{id:'waist',label:'Waist Band',icon:'▬',pct:5},{id:'skirt',label:'Skirt',icon:'▽',pct:45},{id:'sleeves',label:'Sleeves',icon:'▷',pct:10},{id:'hem',label:'Hem',icon:'▬',pct:5},{id:'border',label:'Border',icon:'⬚',pct:5}],
+  skirt:     [{id:'waistband',label:'Waistband',icon:'▬',pct:10},{id:'body',label:'Skirt Body',icon:'▽',pct:75},{id:'hem',label:'Hem',icon:'▬',pct:10},{id:'border',label:'Border',icon:'⬚',pct:5}],
+  beanie:    [{id:'crown',label:'Crown',icon:'◯',pct:30},{id:'body',label:'Hat Body',icon:'⬜',pct:50},{id:'brim',label:'Brim',icon:'▬',pct:20}],
+  scarf:     [{id:'center',label:'Center Body',icon:'⬜',pct:70},{id:'ends',label:'End Sections',icon:'▬',pct:20},{id:'border',label:'Long-Edge Border',icon:'⬚',pct:10}],
+  shawl:     [{id:'center',label:'Center Spine',icon:'▲',pct:20},{id:'body',label:'Main Body',icon:'⬜',pct:55},{id:'border',label:'Edging / Border',icon:'⬚',pct:25}],
+  blanket:   [{id:'center',label:'Center Body',icon:'⬜',pct:60},{id:'inner-border',label:'Inner Border',icon:'⬚',pct:15},{id:'outer-border',label:'Outer Border',icon:'⬜',pct:15},{id:'corner',label:'Corners',icon:'◼',pct:10}],
+  mittens:   [{id:'hand',label:'Hand Body',icon:'⬜',pct:50},{id:'thumb',label:'Thumb',icon:'▷',pct:20},{id:'cuff',label:'Cuff / Ribbing',icon:'▬',pct:25},{id:'border',label:'Border',icon:'⬚',pct:5}],
+  socks:     [{id:'leg',label:'Leg',icon:'⬜',pct:35},{id:'heel',label:'Heel',icon:'◁',pct:20},{id:'foot',label:'Foot',icon:'⬜',pct:30},{id:'toe',label:'Toe',icon:'◯',pct:10},{id:'cuff',label:'Cuff',icon:'▬',pct:5}],
+  bag:       [{id:'body',label:'Bag Body',icon:'⬜',pct:65},{id:'base',label:'Base',icon:'▬',pct:15},{id:'handles',label:'Handles',icon:'◯',pct:10},{id:'border',label:'Top Border',icon:'⬚',pct:10}],
+  headband:  [{id:'body',label:'Band Body',icon:'⬜',pct:85},{id:'join',label:'Join / Bow',icon:'◯',pct:15}],
+  pillow:    [{id:'front',label:'Front Panel',icon:'⬜',pct:45},{id:'back',label:'Back Panel',icon:'⬜',pct:45},{id:'border',label:'Border',icon:'⬚',pct:10}],
+  dishcloth: [{id:'center',label:'Center Body',icon:'⬜',pct:75},{id:'border',label:'Border',icon:'⬚',pct:25}],
+  basket:    [{id:'base',label:'Base',icon:'◯',pct:25},{id:'sides',label:'Sides / Walls',icon:'⬜',pct:60},{id:'rim',label:'Rim',icon:'▬',pct:15}],
+};
+// fallback for amigurumi and any missing
+const DEFAULT_ZONES = [{id:'main',label:'Main Body',icon:'⬜',pct:60},{id:'detail',label:'Detail / Accent',icon:'◼',pct:25},{id:'border',label:'Edge / Trim',icon:'⬚',pct:15}];
+
+// zone color palette
+const ZONE_COLORS = ['#9b72d0','#2e7d46','#d4927a','#3d7a8a','#c9893a','#7a5c8a','#b85c38','#4a7c9f','#6b8c4a','#a63d5f'];
+
+// Current zone assignments: [{zoneId, zoneName, stitchId, color}]
+let zoneAssignments = [];
+
+function getZoneDefs() {
+  const style = document.getElementById('style')?.value || 'sweater';
+  return ZONE_DEFS[style] || DEFAULT_ZONES;
+}
+
+function setComposerMode(mode, btn) {
+  composerMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('singleMode').style.display = mode === 'single' ? 'block' : 'none';
+  document.getElementById('multiMode').style.display = mode === 'multi' ? 'block' : 'none';
+  if (mode === 'multi') {
+    initMultiMode();
+  }
+}
+
+function initMultiMode() {
+  const defs = getZoneDefs();
+  // init zone assignments if empty
+  if (zoneAssignments.length === 0) {
+    zoneAssignments = defs.slice(0, 3).map((z, i) => ({
+      zoneId: z.id, zoneName: z.label, stitchId: 'dc', color: ZONE_COLORS[i % ZONE_COLORS.length]
+    }));
+  }
+  populateNewZoneSelect();
+  renderZoneDiagram();
+  renderZonesList();
+  renderZoneStitchGrid();
+  renderCompositionPreview();
+}
+
+function populateNewZoneSelect() {
+  const sel = document.getElementById('newZoneName');
+  const defs = getZoneDefs();
+  // custom zones not yet added
+  const existingIds = zoneAssignments.map(z => z.zoneId);
+  const available = defs.filter(z => !existingIds.includes(z.zoneId));
+  sel.innerHTML = [
+    ...available.map(z => `<option value="${z.id}|${z.label}">${z.label}</option>`),
+    `<option value="custom|Custom Zone">✦ Custom Zone…</option>`
+  ].join('');
+}
+
+function renderZoneDiagram() {
+  const diag = document.getElementById('zoneDiagram');
+  const leg = document.getElementById('zoneLegend');
+  diag.innerHTML = zoneAssignments.map((z, i) => {
+    const st = stObj(z.stitchId);
+    return `<div class="zone-block ${activeZoneIndex === i ? 'active-zone' : ''}" onclick="setActiveZone(${i})">
+      <div class="zone-swatch" style="background:${z.color}"></div>
+      <span class="zone-block-label">${z.zoneName}</span>
+      <span class="zone-block-stitch">${st.abbr}</span>
+    </div>`;
+  }).join('');
+
+  leg.innerHTML = `<div class="zone-legend-title">Zone Key</div>` +
+    zoneAssignments.map(z => {
+      const st = stObj(z.stitchId);
+      return `<div class="zone-legend-item"><div class="legend-swatch" style="background:${z.color}"></div><span>${z.zoneName} → ${st.name}</span></div>`;
+    }).join('');
+}
+
+function renderZonesList() {
+  const list = document.getElementById('zonesList');
+  if (zoneAssignments.length === 0) {
+    list.innerHTML = `<div style="font-size:0.85rem;color:rgba(26,34,24,0.45);font-style:italic;padding:0.5rem;">No zones added yet. Add a zone below.</div>`;
+    return;
+  }
+  list.innerHTML = zoneAssignments.map((z, i) => {
+    const st = stObj(z.stitchId);
+    return `<div class="zone-row ${activeZoneIndex === i ? 'selected' : ''}" onclick="setActiveZone(${i})">
+      <div class="zone-row-color" style="background:${z.color}"></div>
+      <div class="zone-row-info">
+        <div class="zone-row-name">${z.zoneName}</div>
+        <div class="zone-row-stitch">${st.name} (${st.abbr}) · ${st.cat}</div>
+      </div>
+      <button class="zone-remove-btn" onclick="removeZone(${i},event)" title="Remove zone">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function setActiveZone(i) {
+  activeZoneIndex = i;
+  const z = zoneAssignments[i];
+  document.getElementById('zonePickerLabel').textContent = `Picking stitch for: ${z.zoneName}`;
+  renderZoneDiagram();
+  renderZonesList();
+  renderZoneStitchGrid();
+}
+
+function addZone() {
+  const sel = document.getElementById('newZoneName');
+  const val = sel.value;
+  if (!val) return;
+  const [id, name] = val.split('|');
+  const color = ZONE_COLORS[zoneAssignments.length % ZONE_COLORS.length];
+  zoneAssignments.push({ zoneId: id === 'custom' ? 'custom-' + Date.now() : id, zoneName: name === 'Custom Zone…' ? prompt('Zone name:') || 'Custom' : name, stitchId: 'dc', color });
+  activeZoneIndex = zoneAssignments.length - 1;
+  populateNewZoneSelect();
+  renderZoneDiagram();
+  renderZonesList();
+  renderCompositionPreview();
+}
+
+function removeZone(i, e) {
+  e.stopPropagation();
+  zoneAssignments.splice(i, 1);
+  if (activeZoneIndex >= zoneAssignments.length) activeZoneIndex = zoneAssignments.length - 1;
+  populateNewZoneSelect();
+  renderZoneDiagram();
+  renderZonesList();
+  renderCompositionPreview();
+}
+
+function assignStitchToZone(stitchId) {
+  if (activeZoneIndex === null || activeZoneIndex >= zoneAssignments.length) return;
+  zoneAssignments[activeZoneIndex].stitchId = stitchId;
+  renderZoneDiagram();
+  renderZonesList();
+  renderCompositionPreview();
+}
+
+function renderZoneStitchGrid(filter='all') {
+  const grid = document.getElementById('zoneStitchGrid');
+  if (!grid) return;
+  const filtered = filter === 'all' ? STITCHES : STITCHES.filter(s => s.cat === filter);
+  const activeStitchId = activeZoneIndex !== null && zoneAssignments[activeZoneIndex] ? zoneAssignments[activeZoneIndex].stitchId : null;
+  grid.innerHTML = filtered.map(s => `
+    <div class="stitch-card ${s.id === activeStitchId ? 'selected' : ''}"
+         onclick="assignStitchToZone('${s.id}'); renderZoneStitchGrid();">
+      <div class="stitch-name">${s.name}</div>
+      <div class="stitch-abbr">${s.abbr}</div>
+      <div class="stitch-type">${s.cat}</div>
+    </div>`).join('');
+}
+
+function filterZoneStitches(cat, el) {
+  document.querySelectorAll('#multiMode .stitch-category .cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderZoneStitchGrid(cat);
+}
+
+function renderCompositionPreview() {
+  const preview = document.getElementById('compositionPreview');
+  const zones = document.getElementById('compPreviewZones');
+  if (zoneAssignments.length === 0) { preview.style.display = 'none'; return; }
+  preview.style.display = 'block';
+  zones.innerHTML = zoneAssignments.map(z => {
+    const st = stObj(z.stitchId);
+    return `<div class="comp-zone-chip">
+      <div class="comp-zone-dot" style="background:${z.color}"></div>
+      <span class="comp-zone-text">${z.zoneName}</span>
+      <span class="comp-zone-abbr">${st.abbr}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderStitchGrid(filter='all') {
+  const grid = document.getElementById('stitchGrid');
+  const filtered = filter === 'all' ? STITCHES : STITCHES.filter(s => s.cat === filter);
+  grid.innerHTML = filtered.map(s => `
+    <div class="stitch-card ${s.id === selectedStitch ? 'selected' : ''}" 
+         id="sc-${s.id}" onclick="selectStitch('${s.id}','${s.name}','${s.abbr}')">
+      <div class="stitch-name">${s.name}</div>
+      <div class="stitch-abbr">${s.abbr}</div>
+      <div class="stitch-type">${s.type.charAt(0).toUpperCase()+s.type.slice(1)} · ${s.cat}</div>
+    </div>
+  `).join('');
+}
+
+
+
+function selectStitch(id, name, abbr) {
+  selectedStitch = id;
+  document.querySelectorAll('#stitchGrid .stitch-card').forEach(c => c.classList.remove('selected'));
+  const el = document.getElementById('sc-'+id);
+  if (el) el.classList.add('selected');
+  const nameEl = document.getElementById('selectedStitchName');
+  if (nameEl) nameEl.textContent = `✓ Selected: ${name} (${abbr})`;
+  showStitchPreview(id);
+}
+
+// ==================== STITCH SVG VISUALS ====================
+const STITCH_VISUALS = {
+
+  // ---- STANDARD ----
+  'ch': {
+    tip: 'Every crochet project starts here! Make a slip knot, then pull loops through.',
+    steps: ['Make a slip knot on your hook','Yarn over (yo)','Pull yarn through the loop on hook','Repeat to desired length'],
+    draw: (c,w,h) => {
+      const y=h/2; let x=12;
+      for(let i=0;i<6;i++){
+        circle(c,x,y,9,'none','#9b72d0',2);
+        line(c,x+9,y,x+18,y,'#9b72d0',1.5);
+        x+=24;
+      }
+    }
+  },
+  'sl-st': {
+    tip: 'The flattest stitch — great for joining rounds without adding height.',
+    steps: ['Insert hook into stitch','Yarn over','Pull through stitch AND loop on hook in one motion'],
+    draw: (c,w,h) => {
+      for(let row=0;row<3;row++){
+        for(let col=0;col<7;col++){
+          const x=14+col*22, y=18+row*22;
+          circle(c,x,y,4,'none','#9b72d0',1.5);
+        }
+      }
+    }
+  },
+  'sc': {
+    tip: 'Dense, firm fabric — perfect for amigurumi and bags. Short stitch height.',
+    steps: ['Insert hook into stitch','Yarn over, pull up a loop (2 loops on hook)','Yarn over, pull through both loops'],
+    draw: (c,w,h) => drawBasicGrid(c,w,h,16,14,'#9b72d0','#6a3fa0','sc')
+  },
+  'hdc': {
+    tip: 'A middle ground stitch — slightly taller than sc with a lovely soft drape.',
+    steps: ['Yarn over FIRST, then insert hook','Yarn over, pull up loop (3 loops on hook)','Yarn over, pull through ALL 3 loops'],
+    draw: (c,w,h) => drawBasicGrid(c,w,h,20,11,'#9b72d0','#6a3fa0','hdc')
+  },
+  'dc': {
+    tip: 'The workhorse of crochet! Tall, open, and great for garments.',
+    steps: ['Yarn over, insert hook into stitch','Yarn over, pull up loop (3 loops)','Yarn over, pull through 2 loops (twice)'],
+    draw: (c,w,h) => drawBasicGrid(c,w,h,30,9,'#9b72d0','#6a3fa0','dc')
+  },
+  'tr': {
+    tip: 'Double yarn over creates a very tall, airy stitch — ideal for lacework.',
+    steps: ['Yarn over TWICE, insert hook','Pull up loop (4 loops on hook)','[Yarn over, pull through 2 loops] × 3'],
+    draw: (c,w,h) => drawBasicGrid(c,w,h,38,7,'#9b72d0','#6a3fa0','tr')
+  },
+  'dtr': {
+    tip: 'Triple yarn over — creates extra-long stitches for dramatic lace patterns.',
+    steps: ['Yarn over 3 times, insert hook','Pull up loop (5 loops on hook)','[Yarn over, pull through 2 loops] × 4'],
+    draw: (c,w,h) => drawBasicGrid(c,w,h,46,6,'#9b72d0','#6a3fa0','dtr')
+  },
+  'sc-blo': {
+    tip: 'Working in back loop only creates a horizontal ridge — natural ribbing effect.',
+    steps: ['Insert hook in BACK LOOP ONLY of stitch','Yarn over, pull up loop','Yarn over, pull through both loops'],
+    draw: (c,w,h) => drawBLOGrid(c,w,h,'#9b72d0','#6a3fa0')
+  },
+  'dc-blo': {
+    tip: 'DC in BLO gives a stretchy rib. Great for cuffs, neckbands, hat brims.',
+    steps: ['Yarn over, insert in BACK LOOP ONLY','Pull up loop (3 on hook)','[Yo, pull through 2] twice'],
+    draw: (c,w,h) => drawBLOGrid(c,w,h,'#9b72d0','#6a3fa0',true)
+  },
+
+  // ---- TEXTURED ----
+  'shell': {
+    tip: 'Fan of 5 dc in one stitch creates beautiful scalloped arches.',
+    steps: ['Skip 2 stitches','Work 5 dc all into the SAME stitch','Skip 2 stitches, sc in next (repeat)'],
+    draw: (c,w,h) => drawShellStitch(c,w,h)
+  },
+  'v-stitch': {
+    tip: '(dc, ch1, dc) in one stitch. Creates an open, elegant diamond mesh.',
+    steps: ['Skip 1 stitch','Work (dc, ch1, dc) into same stitch','Skip 1 stitch, repeat across'],
+    draw: (c,w,h) => drawVStitch(c,w,h)
+  },
+  'puff': {
+    tip: 'Multiple partial hdc pulled together into a soft, pillowy bobble.',
+    steps: ['[Yo, insert hook, pull up loop] × 4 in same st','Yo, pull through all 9 loops at once','Ch 1 to lock the puff'],
+    draw: (c,w,h) => drawPuffBobble(c,w,h,'puff')
+  },
+  'bobble': {
+    tip: 'Five partial dc worked together. Firmer than a puff — pops to the front.',
+    steps: ['[Yo, insert, pull up loop, yo, pull through 2] × 5','Yarn over, pull through all 6 loops','Ch 1 to secure'],
+    draw: (c,w,h) => drawPuffBobble(c,w,h,'bobble')
+  },
+  'popcorn': {
+    tip: '5 complete dc in one stitch, then closed. Creates a dramatic 3D bump.',
+    steps: ['Work 5 complete dc in same stitch','Drop loop, insert hook in FIRST dc','Pull dropped loop through to pop it'],
+    draw: (c,w,h) => drawPopcorn(c,w,h)
+  },
+  'waffle': {
+    tip: 'Alternating front/back post dc creates a perfect waffle grid texture.',
+    steps: ['Row 1: *fpdc, dc* repeat','Row 2: *bpdc, dc* repeat','Repeat rows 1 & 2 alternating'],
+    draw: (c,w,h) => drawWaffle(c,w,h)
+  },
+  'lemon-peel': {
+    tip: 'Simple alternating sc and dc across rows gives a subtle pebbly texture.',
+    steps: ['Row 1: *sc, dc* across','Row 2: *dc, sc* across (reversed)','Repeat for pebble effect'],
+    draw: (c,w,h) => drawLemonPeel(c,w,h)
+  },
+  'star': {
+    tip: '5 loops drawn up together into a starburst — dense and beautifully decorative.',
+    steps: ['Pull up 5 loops across stitches','Yo, pull through all 5 loops','Ch 1 to secure — eye of the star'],
+    draw: (c,w,h) => drawStar(c,w,h)
+  },
+  'spike': {
+    tip: 'Insert hook 1–3 rows below current row. Creates elongated diagonal lines.',
+    steps: ['Insert hook into stitch 1–3 rows BELOW','Pull up a long loop to current height','Yo, pull through both loops (sc spike)'],
+    draw: (c,w,h) => drawSpike(c,w,h)
+  },
+  'crocodile': {
+    tip: 'DC fans worked around post of stitches then folded. Creates layered scales!',
+    steps: ['Work a foundation of dc pairs','Rotate, work 5 dc around EACH post of pair','The fan folds to create the scale shape'],
+    draw: (c,w,h) => drawCrocodile(c,w,h)
+  },
+  'broomstick': {
+    tip: 'Enlarge loops over a dowel or large hook, then work in groups. Eyelet bands.',
+    steps: ['Pull up large loops onto broomstick/big hook','Slip groups of 4 loops off together','Work (sc + 3dc) into each group'],
+    draw: (c,w,h) => drawBroomstick(c,w,h)
+  },
+  'hairpin': {
+    tip: 'Work sc around a hairpin loom frame. Creates delicate lace strips.',
+    steps: ['Anchor yarn on hairpin loom center','Sc around one prong, rotate loom','Repeat — loops build on each side'],
+    draw: (c,w,h) => drawHairpin(c,w,h)
+  },
+  'catherine-wheel': {
+    tip: 'Alternating fans and clusters create a spinning starburst repeat.',
+    steps: ['Row 1: 7dc-cluster, ch3 repeat (fans)','Row 2: 7dc fan into cluster of prev row','Stagger each repeat for wheel effect'],
+    draw: (c,w,h) => drawCatherineWheel(c,w,h)
+  },
+  'granny': {
+    tip: 'Classic motif! DC clusters with ch-spaces, worked in rounds from center.',
+    steps: ['Rnd 1: MR, [3dc, ch2] × 4 corners','Rnd 2: [3dc in ch-sp, ch1, 3dc ch2] at corners','Join new colors at any corner ch-space'],
+    draw: (c,w,h) => drawGranny(c,w,h)
+  },
+  'pinwheel': {
+    tip: 'DC arms spiral from center — creates a dynamic swirling motif.',
+    steps: ['MR, 8 dc','Each rnd: inc at each arm with ch between','Arms spiral outward creating pinwheel'],
+    draw: (c,w,h) => drawPinwheel(c,w,h)
+  },
+  'corner2corner': {
+    tip: 'Diagonal squares from corner to corner. Perfect for pixel art blankets!',
+    steps: ['Start with 1 square at corner','Inc 1 square each row diagonally','After center, dec 1 square each row'],
+    draw: (c,w,h) => drawC2C(c,w,h)
+  },
+  'tapestry': {
+    tip: 'Carry unused color inside stitches while working the main color on top.',
+    steps: ['Hold unused color against work','Work sc over it (hiding it inside)','Switch colors by pulling new color through last 2 loops'],
+    draw: (c,w,h) => drawTapestry(c,w,h)
+  },
+  'interlocking-rings': {
+    tip: 'Linked circular motifs create a fabric of interlocked rings.',
+    steps: ['Ch 20, sl st to form ring','Work sc around ring','Link next ring through completed ring before joining'],
+    draw: (c,w,h) => drawInterlockingRings(c,w,h)
+  },
+  'larks-head': {
+    tip: 'Fold yarn in half, pull loop through, thread ends through — instant fringe!',
+    steps: ['Fold yarn strand in half','Pull folded loop up through edge stitch','Pull both ends through the loop and tighten'],
+    draw: (c,w,h) => drawLarksHead(c,w,h)
+  },
+
+  // ---- MOSAIC ----
+  'overlay-mosaic': {
+    tip: 'Spike stitches worked on top (overlay) create bold geometric patterns. Two colors, one per row.',
+    steps: ['Row A (Color A): dc across normally','Row B (Color B): dc across, but SPIKE into Color A row for pattern stitches','Never carry yarn — just drop and pick up'],
+    draw: (c,w,h) => drawMosaic(c,w,h,'overlay')
+  },
+  'inset-mosaic': {
+    tip: 'Only one color visible per row — the pattern forms from strategic skipped stitches.',
+    steps: ['Work 2 rows Color A, 2 rows Color B','When using Color B: skip stitches where Color A shows','Sl st into skipped stitches instead of working them'],
+    draw: (c,w,h) => drawMosaic(c,w,h,'inset')
+  },
+  'mosaic-granny': {
+    tip: 'Two-color granny squares using mosaic rules — one color per full round.',
+    steps: ['Rnd 1 (Color A): standard granny round','Rnd 2 (Color B): add second ring, slip past Color A clusters','Alternate colors each round'],
+    draw: (c,w,h) => drawMosaicGranny(c,w,h)
+  },
+  'woven-mosaic': {
+    tip: 'Slip stitches weave between rows creating an interlaced woven look.',
+    steps: ['Base: work rows of dc in Color A','Color B: sl st in columns between dc posts — going up or down','Creates crosshatch / woven basket illusion'],
+    draw: (c,w,h) => drawWovenMosaic(c,w,h)
+  },
+  'bavarian': {
+    tip: 'Raised dc groups in segments — worked in rounds for colorblock squares.',
+    steps: ['Foundation round of ch-sps','Round 2: [dc cluster into ch-sp] in each section','Each segment rises in height creating a 3D raised effect'],
+    draw: (c,w,h) => drawBavarian(c,w,h)
+  },
+  'planned-pooling': {
+    tip: 'Match your chain count to the yarn color repeat length to create plaid or argyle!',
+    steps: ['Find color repeat length of self-striping yarn','Chain a multiple that aligns colors','Crochet sc or moss st — watch the plaid appear!'],
+    draw: (c,w,h) => drawPlannedPooling(c,w,h)
+  },
+
+  // ---- TUNISIAN ----
+  'tss': {
+    tip: 'The foundation of Tunisian! Pick up loops going forward, then work them off going back.',
+    steps: ['Forward Pass: insert in vertical bar, pull up loop — keep all loops on hook','Return Pass: ch1, *yo, pull through 2 loops* to end','Creates a firm fabric with a knit-like grid appearance'],
+    draw: (c,w,h) => drawTunisian(c,w,h,'tss')
+  },
+  'tks': {
+    tip: 'Insert through the CENTER of the vertical bar — fabric looks exactly like knitting!',
+    steps: ['Forward: insert hook through center of vertical bar','Pull up loop, keep on hook','Return: standard Tunisian return pass'],
+    draw: (c,w,h) => drawTunisian(c,w,h,'tks')
+  },
+  'tps': {
+    tip: 'Yarn held to front before inserting hook — creates purl bumps on the back face.',
+    steps: ['Bring yarn to FRONT of work','Insert hook under vertical bar from right to left','Pull up loop (yarn wraps purl-style)','Standard return pass'],
+    draw: (c,w,h) => drawTunisian(c,w,h,'tps')
+  },
+  'tfs': {
+    tip: 'Insert through BOTH vertical bars for the densest, firmest Tunisian fabric.',
+    steps: ['Insert hook through BOTH vertical bars at once','Pull up loop through both','Repeat across — Return pass as normal'],
+    draw: (c,w,h) => drawTunisian(c,w,h,'tfs')
+  },
+  'tesm': {
+    tip: 'Chain added before completing each loop creates a stretchy, drapey fabric.',
+    steps: ['Forward: insert hook, pull up loop','Ch 1 before moving to next stitch','Return pass as normal — extra chain adds drape'],
+    draw: (c,w,h) => drawTunisian(c,w,h,'tesm')
+  },
+  'tws': {
+    tip: 'Twist hook before pickup creates a slight cable-look crossing texture.',
+    steps: ['Insert hook, then rotate hook 180°','Pull up loop through the twisted bar','Return pass as normal'],
+    draw: (c,w,h) => drawTunisian(c,w,h,'tws')
+  },
+  'tss-color': {
+    tip: 'Color changes on the forward pass only — creates crisp stranded patterns and checks.',
+    steps: ['Forward Pass: pick up loops in Color A for pattern stitches','Switch to Color B at designated positions on same pass','Return Pass: work off loops — colors form pattern'],
+    draw: (c,w,h) => drawTunisianColor(c,w,h)
+  },
+  'tunisian-smock': {
+    tip: 'Gather columns of Tss with surface slip stitches — creates a honeycomb smocked fabric.',
+    steps: ['Work base fabric in Tss','Surface slip stitch: gather pairs of columns together','Work smock points in diamond or honeycomb pattern'],
+    draw: (c,w,h) => drawTunisianSmock(c,w,h)
+  },
+  'tunisian-rib': {
+    tip: 'Alternating Tss and Tps columns creates a stretchy ribbed fabric.',
+    steps: ['Forward Pass: *Tss in 1 bar, Tps in next bar* repeat','Return Pass: standard (ch1, yo, pull through 2)','Columns of knit/purl bars form the rib'],
+    draw: (c,w,h) => drawTunisianRib(c,w,h)
+  },
+  'tunisian-entrelac': {
+    tip: 'Interlocking Tunisian squares worked in alternating directions — woven basket appearance.',
+    steps: ['Work first row of horizontal Tunisian squares','Second row: pick up stitches along edges and work vertical squares','Squares interlock like a woven grid'],
+    draw: (c,w,h) => drawTunisianEntrelac(c,w,h)
+  },
+};
+
+// ==================== SVG DRAWING HELPERS ====================
+function makeSVG(w=200,h=140) {
+  return {
+    els: [],
+    w, h,
+    toString() { return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">${this.els.join('')}</svg>`; }
+  };
+}
+
+function line(c,x1,y1,x2,y2,stroke='#9b72d0',sw=1.5,dash='') {
+  c.els.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" ${dash?`stroke-dasharray="${dash}"`:''}/>`);
+}
+function circle(c,cx,cy,r,fill='none',stroke='#9b72d0',sw=1.5) {
+  c.els.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`);
+}
+function rect(c,x,y,w,h,fill='none',stroke='#9b72d0',sw=1,rx=1) {
+  c.els.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" rx="${rx}"/>`);
+}
+function path(c,d,fill='none',stroke='#9b72d0',sw=1.5) {
+  c.els.push(`<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`);
+}
+function text(c,x,y,txt,fill='#9b72d0',size=9,anchor='middle') {
+  c.els.push(`<text x="${x}" y="${y}" fill="${fill}" font-size="${size}" text-anchor="${anchor}" font-family="monospace">${txt}</text>`);
+}
+
+// V-shape hook symbol
+function hookV(c,x,y,h2,col='#9b72d0') {
+  path(c,`M${x} ${y} L${x} ${y+h2} Q${x} ${y+h2+5} ${x+4} ${y+h2+5}`,col,col,0);
+  line(c,x,y,x,y+h2,col,2);
+  path(c,`M${x} ${y+h2} Q${x} ${y+h2+6} ${x+5} ${y+h2+6}`,col,col,2);
+}
+
+function drawBasicGrid(c,w,h,stitchH,cols,stroke,fill,type) {
+  const colW = (w-20)/cols;
+  const rows = Math.floor((h-20)/stitchH*1.2);
+  const colors = ['#9b72d0','#7a52a8','#b89ee0'];
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=10+col*colW, y=10+row*stitchH;
+      const sc = colors[row%colors.length];
+      // post (vertical bar)
+      line(c,x+colW*0.5,y+2,x+colW*0.5,y+stitchH-2,sc,1.5);
+      // top chain bar
+      path(c,`M${x+2} ${y+2} Q${x+colW*0.5} ${y} ${x+colW-2} ${y+2}`,'none',sc,1.2);
+      // yarn overs as horizontal bars
+      if(type==='hdc'||type==='dc'||type==='tr'||type==='dtr'){
+        const bars = type==='hdc'?1:type==='dc'?2:type==='tr'?3:4;
+        for(let b=0;b<bars;b++){
+          const by = y+4+(b*(stitchH-8)/Math.max(bars,1));
+          line(c,x+colW*0.2,by,x+colW*0.8,by,sc,1);
+        }
+      }
+    }
+  }
+}
+
+function drawBLOGrid(c,w,h,stroke,fill,isDC=false) {
+  const cols=9, rows=4, colW=(w-20)/cols, rowH=(h-20)/rows;
+  for(let row=0;row<rows;row++){
+    const y=10+row*rowH;
+    // ridge line (BLO indicator)
+    line(c,10,y+2,w-10,y+2,'rgba(155,114,208,0.4)',1,'3,2');
+    for(let col=0;col<cols;col++){
+      const x=10+col*colW;
+      if(isDC){
+        line(c,x+colW/2,y+4,x+colW/2,y+rowH-2,stroke,1.5);
+        line(c,x+colW*0.25,y+rowH*0.35,x+colW*0.75,y+rowH*0.35,stroke,0.8);
+        line(c,x+colW*0.25,y+rowH*0.55,x+colW*0.75,y+rowH*0.55,stroke,0.8);
+      } else {
+        path(c,`M${x+2} ${y+4} Q${x+colW/2} ${y+rowH*0.5} ${x+colW-2} ${y+4}`,'none',stroke,1.2);
+      }
+    }
+  }
+}
+
+function drawShellStitch(c,w,h) {
+  const shells=3, sy=h/2+10;
+  for(let s=0;s<shells;s++){
+    const cx=25+s*(w-30)/shells;
+    // 5 dc fanning out
+    const angles=[-50,-25,0,25,50];
+    angles.forEach(a=>{
+      const rad=a*Math.PI/180, len=28;
+      line(c,cx,sy,cx+Math.sin(rad)*len,sy-Math.cos(rad)*len,'#9b72d0',2);
+      line(c,cx+Math.sin(rad)*len*0.4,sy-Math.cos(rad)*len*0.4,cx+Math.sin(rad)*len*0.4+4,sy-Math.cos(rad)*len*0.4,'#9b72d0',1);
+    });
+    circle(c,cx,sy,3,'#9b72d0','#9b72d0',1);
+    // sc between shells
+    if(s<shells-1) circle(c,cx+(w-30)/shells/2,sy+12,4,'none','rgba(155,114,208,0.5)',1.2);
+  }
+  // base chain
+  line(c,10,sy+12,w-10,sy+12,'rgba(155,114,208,0.4)',1.5);
+}
+
+function drawVStitch(c,w,h) {
+  const units=4; 
+  for(let i=0;i<units;i++){
+    const cx=22+i*(w-24)/units, by=h-25, ty=by-30;
+    // left dc
+    line(c,cx,by,cx-12,ty,'#9b72d0',2);
+    line(c,cx-12,ty+8,cx-6,ty+8,'#9b72d0',1);
+    line(c,cx-12,ty+16,cx-6,ty+16,'#9b72d0',1);
+    // right dc
+    line(c,cx,by,cx+12,ty,'#9b72d0',2);
+    line(c,cx+12,ty+8,cx+6,ty+8,'#9b72d0',1);
+    line(c,cx+12,ty+16,cx+6,ty+16,'#9b72d0',1);
+    // ch1 at top
+    circle(c,cx,ty-5,3,'none','rgba(155,114,208,0.6)',1.2);
+    circle(c,cx,by,4,'#6a3fa0','#9b72d0',1.5);
+  }
+  line(c,10,h-20,w-10,h-20,'rgba(155,114,208,0.4)',1.5);
+}
+
+function drawPuffBobble(c,w,h,type) {
+  const units=4;
+  for(let i=0;i<units;i++){
+    const cx=24+i*(w-30)/units, by=h-25, ty=by-22;
+    const loops=type==='puff'?5:5;
+    for(let l=0;l<loops;l++){
+      const offx=(l-2)*3;
+      path(c,`M${cx} ${by} Q${cx+offx} ${by-10} ${cx+offx*0.5} ${ty}`,'none','rgba(155,114,208,0.7)',1.2);
+    }
+    // pulled together top
+    path(c,`M${cx-8} ${ty} Q${cx} ${ty-8} ${cx+8} ${ty}`,'none','#9b72d0',2);
+    circle(c,cx,by,4,'#6a3fa0','#9b72d0',1.5);
+  }
+  line(c,10,h-20,w-10,h-20,'rgba(155,114,208,0.4)',1.5);
+}
+
+function drawPopcorn(c,w,h) {
+  const units=3;
+  for(let i=0;i<units;i++){
+    const cx=28+i*(w-36)/units, by=h-25, ty=by-26;
+    // 5 dc that pop out
+    [-35,-18,0,18,35].forEach(a=>{
+      const rad=a*Math.PI/180;
+      line(c,cx,by,cx+Math.sin(rad)*26,by-26,'rgba(155,114,208,0.7)',1.5);
+    });
+    // popcorn dome
+    path(c,`M${cx-14} ${ty+2} Q${cx} ${ty-10} ${cx+14} ${ty+2}`,'rgba(106,63,160,0.3)','#9b72d0',2);
+    circle(c,cx,by,4,'#6a3fa0','#9b72d0',1.5);
+  }
+  line(c,10,h-20,w-10,h-20,'rgba(155,114,208,0.4)',1.5);
+}
+
+function drawWaffle(c,w,h) {
+  const cols=6, rows=4, cw=(w-20)/cols, rh=(h-20)/rows;
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=10+col*cw, y=10+row*rh;
+      const isFP = (row+col)%2===0;
+      if(isFP){
+        // front post — raised look
+        rect(c,x+1,y+1,cw-2,rh-2,'rgba(106,63,160,0.25)','#9b72d0',1.5,2);
+        line(c,x+cw/2,y+3,x+cw/2,y+rh-3,'#9b72d0',2);
+      } else {
+        line(c,x+3,y+rh/2,x+cw-3,y+rh/2,'rgba(155,114,208,0.5)',1.2);
+        line(c,x+cw/2,y+3,x+cw/2,y+rh-3,'rgba(155,114,208,0.4)',1);
+      }
+    }
+  }
+}
+
+function drawLemonPeel(c,w,h) {
+  const cols=9, rows=5, cw=(w-20)/cols, rh=(h-20)/rows;
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=10+col*cw, y=10+row*rh;
+      const isSC = (row+col)%2===0;
+      if(isSC){
+        path(c,`M${x+2} ${y+rh*0.3} Q${x+cw/2} ${y+rh*0.7} ${x+cw-2} ${y+rh*0.3}`,'none','#9b72d0',1.5);
+      } else {
+        line(c,x+cw/2,y+2,x+cw/2,y+rh-2,'rgba(155,114,208,0.6)',1.5);
+        line(c,x+cw*0.25,y+rh*0.4,x+cw*0.75,y+rh*0.4,'rgba(155,114,208,0.4)',0.8);
+      }
+    }
+  }
+}
+
+function drawStar(c,w,h) {
+  const units=3;
+  for(let i=0;i<units;i++){
+    const cx=25+i*(w-30)/units, cy=h/2;
+    // 5 spokes
+    for(let s=0;s<5;s++){
+      const a=(s/5)*Math.PI*2-Math.PI/2;
+      line(c,cx,cy,cx+Math.cos(a)*20,cy+Math.sin(a)*20,'rgba(155,114,208,0.6)',1.2);
+    }
+    circle(c,cx,cy,7,'rgba(106,63,160,0.4)','#9b72d0',2);
+    // eye
+    circle(c,cx,cy,2,'#9b72d0','#9b72d0',1);
+  }
+}
+
+function drawSpike(c,w,h) {
+  // show 3 rows of dc with spike lines
+  for(let row=0;row<3;row++){
+    const y=15+row*36;
+    line(c,10,y,w-10,y,'rgba(155,114,208,0.3)',1);
+    for(let col=0;col<7;col++){
+      const x=14+col*26;
+      line(c,x,y,x,y+28,'rgba(155,114,208,0.5)',1);
+      line(c,x-5,y+12,x+5,y+12,'rgba(155,114,208,0.3)',0.8);
+    }
+  }
+  // spike lines in a contrasting color
+  [2,4,6].forEach((col,i)=>{
+    const x=14+col*26, fromRow=2, toRow=0;
+    line(c,x,15+fromRow*36,x,15+toRow*36,'#b89ee0',2,'');
+    circle(c,x,15+toRow*36,3,'#9b72d0','#9b72d0',1);
+  });
+}
+
+function drawCrocodile(c,w,h) {
+  const pairs=3;
+  for(let p=0;p<pairs;p++){
+    const cx=24+p*(w-30)/pairs;
+    // base V posts
+    line(c,cx-7,h-20,cx-7,h-45,'rgba(155,114,208,0.5)',1.5);
+    line(c,cx+7,h-20,cx+7,h-45,'rgba(155,114,208,0.5)',1.5);
+    // scale fan (5 dc around left post)
+    [-40,-20,0,20,40].forEach(a=>{
+      const rad=a*Math.PI/180;
+      line(c,cx-7,h-35,cx-7+Math.sin(rad)*18,h-35-Math.cos(rad)*18,'#9b72d0',1.8);
+    });
+    // fold indicator
+    path(c,`M${cx-22} ${h-28} Q${cx} ${h-18} ${cx+8} ${h-28}`,'rgba(106,63,160,0.3)','#9b72d0',1.5);
+  }
+  line(c,10,h-20,w-10,h-20,'rgba(155,114,208,0.4)',1.5);
+}
+
+function drawBroomstick(c,w,h) {
+  // show vertical rod (broomstick) and loops
+  const rodX=w/2;
+  rect(c,rodX-3,8,6,h-20,'rgba(139,107,191,0.2)','#9b72d0',2,2);
+  // loops
+  for(let i=0;i<5;i++){
+    const y=16+i*(h-30)/5;
+    path(c,`M${10} ${y} Q${rodX-3} ${y-5} ${rodX} ${y}`,'none','rgba(155,114,208,0.7)',1.5);
+    path(c,`M${w-10} ${y} Q${rodX+3} ${y-5} ${rodX} ${y}`,'none','rgba(155,114,208,0.7)',1.5);
+  }
+  // group brackets on right side
+  path(c,`M${w-8} ${20} L${w-4} ${20} L${w-4} ${52} L${w-8} ${52}`,'none','#9b72d0',1.5);
+  text(c,w-2,38,'sc','rgba(244,240,250,0.6)',7,'start');
+}
+
+function drawHairpin(c,w,h) {
+  // two prongs
+  line(c,w/2-20,10,w/2-20,h-10,'#9b72d0',2);
+  line(c,w/2+20,10,w/2+20,h-10,'#9b72d0',2);
+  // connecting bar at bottom
+  path(c,`M${w/2-20} ${h-10} Q${w/2} ${h+5} ${w/2+20} ${h-10}`,'none','#9b72d0',2);
+  // loops on each side
+  for(let i=0;i<5;i++){
+    const y=20+i*18;
+    path(c,`M${w/2-20} ${y} Q${w/2-35} ${y+9} ${w/2-20} ${y+18}`,'none','rgba(155,114,208,0.6)',1.5);
+    path(c,`M${w/2+20} ${y} Q${w/2+35} ${y+9} ${w/2+20} ${y+18}`,'none','rgba(155,114,208,0.6)',1.5);
+  }
+  // center sc
+  for(let i=0;i<4;i++){
+    const y=29+i*18;
+    path(c,`M${w/2-20} ${y} Q${w/2} ${y-6} ${w/2+20} ${y}`,'none','rgba(244,240,250,0.4)',1);
+  }
+}
+
+function drawCatherineWheel(c,w,h) {
+  const cx=w/2, cy=h/2;
+  // 8 spokes of 7dc cluster
+  for(let arm=0;arm<8;arm++){
+    const a=(arm/8)*Math.PI*2;
+    const mx=cx+Math.cos(a)*20, my=cy+Math.sin(a)*20;
+    const ex=cx+Math.cos(a)*42, ey=cy+Math.sin(a)*42;
+    line(c,mx,my,ex,ey,'rgba(155,114,208,0.7)',1.5);
+  }
+  // inner ring
+  circle(c,cx,cy,20,'rgba(106,63,160,0.2)','#9b72d0',1.5);
+  // sc between spokes
+  for(let s=0;s<8;s++){
+    const a=((s+0.5)/8)*Math.PI*2;
+    circle(c,cx+Math.cos(a)*38,cy+Math.sin(a)*38,3,'none','rgba(155,114,208,0.5)',1);
+  }
+}
+
+function drawGranny(c,w,h) {
+  const cx=w/2, cy=h/2, sz=Math.min(w,h)*0.42;
+  // background square
+  rect(c,cx-sz,cy-sz,sz*2,sz*2,'rgba(106,63,160,0.08)','rgba(155,114,208,0.3)',1,3);
+  // 4 corner clusters
+  [[0,0],[1,0],[0,1],[1,1]].forEach(([ci,ri])=>{
+    const qx=cx+(ci*2-1)*sz*0.5, qy=cy+(ri*2-1)*sz*0.5;
+    [-20,0,20].forEach(a=>{
+      const rad=a*Math.PI/180, dx=Math.cos(rad+Math.PI*(ci?0:1))*16, dy=Math.sin(rad+Math.PI*(ri?0:1))*16;
+      line(c,qx,qy,qx+dx,qy-dy,'#9b72d0',1.8);
+    });
+  });
+  // ch-2 corners
+  [[1,1],[-1,1],[1,-1],[-1,-1]].forEach(([sx,sy])=>{
+    circle(c,cx+sx*sz*0.88,cy+sy*sz*0.88,4,'rgba(106,63,160,0.3)','rgba(155,114,208,0.7)',1.2);
+  });
+  // center
+  circle(c,cx,cy,5,'rgba(106,63,160,0.5)','#9b72d0',2);
+}
+
+function drawPinwheel(c,w,h) {
+  const cx=w/2, cy=h/2;
+  for(let arm=0;arm<8;arm++){
+    const a=(arm/8)*Math.PI*2+Math.PI/8;
+    for(let r=1;r<=3;r++){
+      const r1=(r-1)*16+10, r2=r*16+6;
+      path(c,`M${cx+Math.cos(a)*r1} ${cy+Math.sin(a)*r1} L${cx+Math.cos(a+0.35)*r2} ${cy+Math.sin(a+0.35)*r2}`,'none','rgba(155,114,208,0.7)',1.5+r*0.2);
+    }
+  }
+  circle(c,cx,cy,6,'rgba(106,63,160,0.5)','#9b72d0',2);
+}
+
+function drawC2C(c,w,h) {
+  const sq=16;
+  const colors=['rgba(106,63,160,0.7)','rgba(155,114,208,0.4)','rgba(106,63,160,0.5)','rgba(200,170,240,0.4)'];
+  // diagonal grid
+  for(let d=0;d<7;d++){
+    for(let i=0;i<=d && i<5 && (d-i)<5;i++){
+      const x=10+i*sq, y=10+(d-i)*sq;
+      if(x<w-10 && y<h-10){
+        rect(c,x,y,sq-1,sq-1,colors[(d+i)%colors.length],'rgba(155,114,208,0.3)',1,1);
+      }
+    }
+  }
+}
+
+function drawTapestry(c,w,h) {
+  const cols=8, rows=5, cw=(w-20)/cols, rh=(h-20)/rows;
+  // simple pattern — carried color shows in some, main in others
+  const pattern=[[1,0,1,0,1,0,1,0],[0,1,0,1,0,1,0,1],[0,0,1,1,1,1,0,0],[1,1,0,0,0,0,1,1],[1,0,1,0,1,0,1,0]];
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=10+col*cw, y=10+row*rh;
+      const isC2=pattern[row][col];
+      const fill=isC2?'rgba(155,114,208,0.6)':'rgba(46,125,70,0.5)';
+      rect(c,x+0.5,y+0.5,cw-1,rh-1,fill,'rgba(155,114,208,0.2)',0.5,1);
+      // carried color inside
+      if(!isC2) line(c,x+2,y+rh/2,x+cw-2,y+rh/2,'rgba(155,114,208,0.2)',0.7);
+    }
+  }
+}
+
+function drawInterlockingRings(c,w,h) {
+  const rings=[[40,35],[90,35],[140,35],[65,65],[115,65],[40,95],[90,95],[140,95]];
+  rings.forEach(([cx,cy])=>{
+    circle(c,cx,cy,20,'none','rgba(155,114,208,0.5)',1.8);
+  });
+  // front rings (on top)
+  [[90,35],[65,65],[115,65],[90,95]].forEach(([cx,cy])=>{
+    circle(c,cx,cy,20,'none','#9b72d0',2);
+  });
+}
+
+function drawLarksHead(c,w,h) {
+  // base bar
+  line(c,10,h/2-20,w-10,h/2-20,'rgba(155,114,208,0.6)',3);
+  // lark's head knots
+  for(let i=0;i<5;i++){
+    const x=20+i*32;
+    // loop through bar
+    path(c,`M${x} ${h/2-20} Q${x-8} ${h/2-35} ${x} ${h/2-40} Q${x+8} ${h/2-35} ${x} ${h/2-20}`,'none','#9b72d0',2);
+    // hanging strands
+    line(c,x-5,h/2-20,x-5,h/2+25,'rgba(155,114,208,0.7)',1.5);
+    line(c,x+5,h/2-20,x+5,h/2+25,'rgba(155,114,208,0.7)',1.5);
+  }
+}
+
+function drawMosaic(c,w,h,type) {
+  const cols=8, rows=6, cw=(w-16)/cols, rh=(h-16)/rows;
+  const colorA='rgba(106,63,160,0.7)', colorB='rgba(46,125,70,0.6)';
+  // mosaic pattern — simple diagonal checks
+  for(let row=0;row<rows;row++){
+    const isRowA=row%2===0;
+    for(let col=0;col<cols;col++){
+      const x=8+col*cw, y=8+row*rh;
+      const isPattern=(col+Math.floor(row/2))%3===0;
+      if(isPattern && !isRowA){
+        rect(c,x+0.5,y+0.5,cw-1,rh-1,colorA,'rgba(155,114,208,0.3)',0.5,1);
+        if(type==='overlay'){
+          // spike line going down 2 rows
+          line(c,x+cw/2,y+rh,x+cw/2,y-rh,'rgba(155,114,208,0.8)',1.5);
+        }
+      } else {
+        rect(c,x+0.5,y+0.5,cw-1,rh-1,isRowA?colorA:colorB,'rgba(155,114,208,0.2)',0.5,1);
+      }
+    }
+  }
+}
+
+function drawMosaicGranny(c,w,h) {
+  const cx=w/2, cy=h/2, sz=38;
+  // outer square Color B
+  rect(c,cx-sz,cy-sz,sz*2,sz*2,'rgba(46,125,70,0.15)','rgba(46,125,70,0.5)',1.5,3);
+  // inner square Color A
+  rect(c,cx-sz*0.6,cy-sz*0.6,sz*1.2,sz*1.2,'rgba(106,63,160,0.2)','#9b72d0',1.5,3);
+  // center
+  circle(c,cx,cy,8,'rgba(106,63,160,0.4)','#9b72d0',1.5);
+  // corner dc clusters
+  [[1,1],[-1,1],[1,-1],[-1,-1]].forEach(([sx,sy])=>{
+    [0,10,20].forEach(offs=>{
+      line(c,cx+sx*sz*0.5,cy+sy*sz*0.5,cx+sx*(sz*0.5+10+offs),cy+sy*(sz*0.5-5),'rgba(155,114,208,0.7)',1.3);
+    });
+  });
+}
+
+function drawWovenMosaic(c,w,h) {
+  const cols=7, rows=6, cw=(w-16)/cols, rh=(h-16)/rows;
+  // Color A horizontal dc rows
+  for(let row=0;row<rows;row++){
+    const y=8+row*rh;
+    for(let col=0;col<cols;col++){
+      const x=8+col*cw;
+      rect(c,x+0.5,y+0.5,cw-1,rh-1,'rgba(106,63,160,0.2)','rgba(155,114,208,0.3)',0.5,1);
+    }
+  }
+  // Color B weaving slip stitches (vertical paths)
+  for(let col=1;col<cols;col+=2){
+    const x=8+col*cw+cw/2;
+    for(let row=0;row<rows-1;row++){
+      const y1=8+row*rh+rh*0.5, y2=y1+rh;
+      line(c,x,y1,x,y2,'rgba(46,125,70,0.8)',2.5);
+      circle(c,x,y1,2,'rgba(46,125,70,0.8)','rgba(46,125,70,0.8)',1);
+    }
+  }
+}
+
+function drawBavarian(c,w,h) {
+  const cx=w/2, cy=h/2;
+  const segments=8;
+  for(let seg=0;seg<segments;seg++){
+    const a1=(seg/segments)*Math.PI*2, a2=((seg+1)/segments)*Math.PI*2;
+    // raised dc cluster in each segment
+    for(let r=1;r<=3;r++){
+      const midA=(a1+a2)/2, ir=r*14, or=r*14+10;
+      const p1x=cx+Math.cos(a1)*ir, p1y=cy+Math.sin(a1)*ir;
+      const p2x=cx+Math.cos(midA)*or, p2y=cy+Math.sin(midA)*or;
+      const p3x=cx+Math.cos(a2)*ir, p3y=cy+Math.sin(a2)*ir;
+      path(c,`M${p1x} ${p1y} Q${p2x} ${p2y} ${p3x} ${p3y}`,'none',r===2?'#9b72d0':'rgba(155,114,208,0.5)',1.5);
+    }
+  }
+  circle(c,cx,cy,10,'rgba(106,63,160,0.3)','#9b72d0',2);
+}
+
+function drawPlannedPooling(c,w,h) {
+  // shows argyle/plaid pattern from self-striping yarn
+  const cols=9, rows=6, cw=(w-16)/cols, rh=(h-16)/rows;
+  const palette=['rgba(106,63,160,0.7)','rgba(46,125,70,0.6)','rgba(155,114,208,0.6)','rgba(46,125,70,0.4)','rgba(106,63,160,0.4)'];
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=8+col*cw, y=8+row*rh;
+      const ci=(col+row)%palette.length;
+      rect(c,x+0.5,y+0.5,cw-1,rh-1,palette[ci],'rgba(155,114,208,0.15)',0.5,1);
+    }
+  }
+  // diagonal argyle lines
+  for(let d=-4;d<cols+rows;d+=2){
+    const x1=8+d*cw, y1=8;
+    const x2=8, y2=8+d*rh;
+    line(c,Math.max(8,x1),x1>8?8:y2,x2>8?x2:x1+(rows)*cw/cols,x1>8?y1+(cols)*rh/rows:Math.min(h-8,y2+cols*rh),'rgba(244,240,250,0.12)',0.8);
+  }
+}
+
+function drawTunisian(c,w,h,type) {
+  const cols=7, rows=4, cw=(w-16)/cols, rh=(h-16)/rows;
+  const lineCol='#9b72d0', barCol='rgba(155,114,208,0.5)';
+  for(let row=0;row<rows;row++){
+    const y=8+row*rh;
+    // forward pass loops (top bar)
+    line(c,8,y,w-8,y,barCol,1,'4,2');
+    for(let col=0;col<cols;col++){
+      const x=8+col*cw;
+      // vertical bar
+      line(c,x+cw/2,y,x+cw/2,y+rh,lineCol,type==='tfs'?2.5:1.8);
+      // bar markers by type
+      if(type==='tks'){
+        // through-center indicator
+        circle(c,x+cw/2,y+rh*0.5,2,'rgba(155,114,208,0.4)',lineCol,1);
+      } else if(type==='tps'){
+        // purl bump
+        path(c,`M${x+cw*0.2} ${y+rh*0.55} Q${x+cw/2} ${y+rh*0.7} ${x+cw*0.8} ${y+rh*0.55}`,'none',lineCol,1.2);
+      } else if(type==='tesm'){
+        // chain extension
+        circle(c,x+cw/2,y+rh*0.3,2,'none','rgba(155,114,208,0.5)',1);
+      } else if(type==='tws'){
+        // twisted indicator
+        path(c,`M${x+cw*0.3} ${y+rh*0.2} Q${x+cw*0.7} ${y+rh*0.5} ${x+cw*0.3} ${y+rh*0.8}`,'none','rgba(155,114,208,0.7)',1);
+      }
+      // horizontal bar (return pass chain)
+      if(row<rows-1){
+        line(c,x+2,y+rh-1,x+cw-2,y+rh-1,'rgba(155,114,208,0.35)',1.5);
+      }
+    }
+  }
+  // return pass arrow indicator
+  const ay=h-12;
+  path(c,`M${w-14} ${ay} L${14} ${ay}`,'none','rgba(155,114,208,0.5)',1,'6,3');
+  path(c,`M${18} ${ay-4} L${14} ${ay} L${18} ${ay+4}`,'none','rgba(155,114,208,0.5)',1.5);
+  text(c,w/2,ay-3,'← Return Pass','rgba(244,240,250,0.4)',7);
+}
+
+function drawTunisianColor(c,w,h) {
+  const cols=8, rows=4, cw=(w-16)/cols, rh=(h-16)/rows;
+  const cA='rgba(106,63,160,0.75)', cB='rgba(46,125,70,0.65)';
+  const pattern=[[1,1,0,0,1,1,0,0],[0,1,1,0,0,1,1,0],[0,0,1,1,0,0,1,1],[1,0,0,1,1,0,0,1]];
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=8+col*cw, y=8+row*rh;
+      const isA=pattern[row%4][col%8];
+      line(c,x+cw/2,y,x+cw/2,y+rh,isA?cA:cB,2);
+      line(c,x+2,y,x+cw-2,y,'rgba(155,114,208,0.25)',0.8,'3,2');
+    }
+  }
+}
+
+function drawTunisianSmock(c,w,h) {
+  const cols=8, rows=6, cw=(w-16)/cols, rh=(h-16)/rows;
+  // Tss base
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=8+col*cw, y=8+row*rh;
+      line(c,x+cw/2,y,x+cw/2,y+rh,'rgba(155,114,208,0.4)',1.5);
+      line(c,x+2,y+rh,x+cw-2,y+rh,'rgba(155,114,208,0.2)',0.8);
+    }
+  }
+  // smocking gather lines
+  [[1,1],[3,2],[5,1],[7,2],[1,4],[3,3],[5,4],[7,3]].forEach(([col,row])=>{
+    const x=8+col*cw, y=8+row*rh;
+    const col2=col-1;
+    const x2=8+col2*cw;
+    path(c,`M${x+cw/2} ${y+rh/2} Q${x2+cw} ${y+rh/2-8} ${x2+cw/2} ${y+rh/2}`,'none','#9b72d0',2);
+    circle(c,(x+cw/2+x2+cw/2)/2,y+rh/2-5,2,'#9b72d0','#9b72d0',1);
+  });
+}
+
+function drawTunisianRib(c,w,h) {
+  const cols=8, rows=5, cw=(w-16)/cols, rh=(h-16)/rows;
+  for(let row=0;row<rows;row++){
+    for(let col=0;col<cols;col++){
+      const x=8+col*cw, y=8+row*rh;
+      const isKnit=col%2===0;
+      if(isKnit){
+        line(c,x+cw/2,y,x+cw/2,y+rh,'#9b72d0',2.2);
+      } else {
+        // purl bump
+        line(c,x+cw/2,y,x+cw/2,y+rh,'rgba(155,114,208,0.4)',1.5);
+        path(c,`M${x+cw*0.15} ${y+rh*0.55} Q${x+cw/2} ${y+rh*0.72} ${x+cw*0.85} ${y+rh*0.55}`,'none','rgba(155,114,208,0.7)',1.2);
+      }
+    }
+    line(c,8,y,w-8,y,'rgba(155,114,208,0.2)',0.7,'3,2');
+  }
+}
+
+function drawTunisianEntrelac(c,w,h) {
+  const sq=28;
+  const positions=[[10,10],[38,10],[66,10],[114,10],[142,10],[10,38],[38,38],[66,38],[114,38],[142,38],[24,24],[52,24],[80,24],[128,24],[24,52],[52,52],[80,52],[128,52]];
+  positions.forEach(([x,y],i)=>{
+    if(x+sq<w-5 && y+sq<h-5){
+      const isH=i%2===0;
+      rect(c,x,y,sq,sq,'rgba(106,63,160,0.12)','rgba(155,114,208,0.4)',1,2);
+      // internal stitch lines
+      if(isH){
+        for(let l=1;l<4;l++) line(c,x+2,y+sq*l/4,x+sq-2,y+sq*l/4,'rgba(155,114,208,0.3)',0.6);
+      } else {
+        for(let l=1;l<4;l++) line(c,x+sq*l/4,y+2,x+sq*l/4,y+sq-2,'rgba(155,114,208,0.3)',0.6);
+      }
+    }
+  });
+}
+
+function showStitchPreview(id) {
+  const panel = document.getElementById('stitchPreviewPanel');
+  if (!panel) return;
+  const s = stObj(id);
+  if (!s) return;
+  const vis = STITCH_VISUALS[id];
+
+  if (!vis) {
+    // fallback for stitches without dedicated visual yet
+    panel.className = 'stitch-preview-panel visible';
+    panel.innerHTML = `
+      <div class="stitch-preview-info">
+        <h4>${s.name}</h4>
+        <div class="sp-abbr">${s.abbr}${s.gauge ? ' · ' + s.gauge + ' sts/4" (worsted)' : ''}</div>
+        <div class="sp-desc">${s.desc}</div>
+      </div>`;
+    return;
+  }
+
+  // draw SVG
+  const svg = makeSVG(200, 130);
+  vis.draw(svg, 200, 130);
+
+  panel.className = 'stitch-preview-panel visible';
+  panel.innerHTML = `
+    <div class="stitch-preview-svg">${svg.toString()}</div>
+    <div class="stitch-preview-info">
+      <h4>${s.name}</h4>
+      <div class="sp-abbr">${s.abbr}${s.gauge ? ' · ' + s.gauge + ' sts/4" (worsted)' : ''} · ${s.cat}</div>
+      <div class="sp-desc">${s.desc}</div>
+      ${vis.tip ? `<div class="sp-tip">✦ ${vis.tip}</div>` : ''}
+      <div class="stitch-preview-steps">
+        ${(vis.steps||[]).map((step, i) => `<div class="sp-step" data-n="${i+1}.">${step}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function filterStitches(cat, el) {
+  document.querySelectorAll('#singleMode .stitch-category .cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderStitchGrid(cat);
+}
+
+// ===== LIBRARY =====
+function renderLib(filter='all') {
+  const grid = document.getElementById('libGrid');
+  const filtered = filter === 'all' ? STITCHES : STITCHES.filter(s => s.cat === filter);
+  const typeColors = {standard:'type-standard',tunisian:'type-tunisian',mosaic:'type-mosaic',specialty:'type-specialty',textured:'type-specialty',colorwork:'type-specialty'};
+  grid.innerHTML = filtered.map(s => `
+    <div class="lib-card">
+      <div class="lib-card-header">
+        <h3>${s.name}</h3>
+        <span class="lib-card-type ${typeColors[s.cat]||'type-specialty'}">${s.cat}</span>
+      </div>
+      <span class="abbr-tag">${s.abbr}${s.gauge ? ` · ${s.gauge} sts/4" (worsted)` : ''}</span>
+      <p>${s.desc}</p>
+    </div>
+  `).join('');
+}
+
+function filterLib(cat, el) {
+  document.querySelectorAll('#libFilterBar .cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderLib(cat);
+}
+
+// ===== MEASUREMENTS =====
+const measureDefs = {
+  sweater:   ['Chest circumference','Waist circumference','Hip circumference','Body length','Sleeve length','Armhole depth'],
+  cardigan:  ['Chest circumference','Waist circumference','Hip circumference','Body length','Sleeve length','Armhole depth'],
+  vest:      ['Chest circumference','Waist circumference','Hip circumference','Body length','Armhole depth'],
+  top:       ['Bust circumference','Waist circumference','Crop length','Strap width'],
+  dress:     ['Bust circumference','Waist circumference','Hip circumference','Total length','Sleeve length'],
+  skirt:     ['Waist circumference','Hip circumference','Skirt length'],
+  beanie:    ['Head circumference'],
+  scarf:     ['Desired length','Desired width'],
+  shawl:     ['Wingspan','Center depth'],
+  mittens:   ['Hand circumference','Hand length','Thumb length'],
+  socks:     ['Foot circumference','Foot length','Leg height'],
+  bag:       ['Width','Height','Handle drop'],
+  headband:  ['Head circumference','Headband width'],
+  blanket:   ['Width','Length'],
+  dishcloth: ['Width','Length'],
+  pillow:    ['Width','Height'],
+  basket:    ['Diameter','Height'],
+  'amigurumi-bear':     ['Desired height (inches)'],
+  'amigurumi-bunny':    ['Desired height (inches)'],
+  'amigurumi-cat':      ['Desired height (inches)'],
+  'amigurumi-elephant': ['Desired height (inches)'],
+  'amigurumi-dragon':   ['Desired height (inches)'],
+  'amigurumi-doll':     ['Desired height (inches)'],
+};
+
+const sizeDefaults = {
+  sweater:{
+    XS: {chest:32, waist:26, hip:34, bodyLength:24, sleeveLength:17, armholeDepth:7},
+    S:  {chest:34, waist:28, hip:36, bodyLength:25, sleeveLength:18, armholeDepth:7.5},
+    M:  {chest:36, waist:30, hip:38, bodyLength:26, sleeveLength:19, armholeDepth:8},
+    L:  {chest:40, waist:34, hip:42, bodyLength:27, sleeveLength:20, armholeDepth:8.5},
+    XL: {chest:44, waist:38, hip:46, bodyLength:28, sleeveLength:21, armholeDepth:9},
+    '2XL':{chest:48, waist:42, hip:50, bodyLength:29, sleeveLength:21, armholeDepth:9.5},
+    '3XL':{chest:52, waist:46, hip:54, bodyLength:30, sleeveLength:22, armholeDepth:10},
+  },
+  cardigan:{
+    XS: {chest:32, waist:26, hip:34, bodyLength:24, sleeveLength:17, armholeDepth:7},
+    S:  {chest:34, waist:28, hip:36, bodyLength:25, sleeveLength:18, armholeDepth:7.5},
+    M:  {chest:36, waist:30, hip:38, bodyLength:26, sleeveLength:19, armholeDepth:8},
+    L:  {chest:40, waist:34, hip:42, bodyLength:27, sleeveLength:20, armholeDepth:8.5},
+    XL: {chest:44, waist:38, hip:46, bodyLength:28, sleeveLength:21, armholeDepth:9},
+    '2XL':{chest:48, waist:42, hip:50, bodyLength:29, sleeveLength:21, armholeDepth:9.5},
+    '3XL':{chest:52, waist:46, hip:54, bodyLength:30, sleeveLength:22, armholeDepth:10},
+  },
+  vest:{
+    XS: {chest:32, waist:26, hip:34, bodyLength:22, armholeDepth:7},
+    S:  {chest:34, waist:28, hip:36, bodyLength:23, armholeDepth:7.5},
+    M:  {chest:36, waist:30, hip:38, bodyLength:24, armholeDepth:8},
+    L:  {chest:40, waist:34, hip:42, bodyLength:25, armholeDepth:8.5},
+    XL: {chest:44, waist:38, hip:46, bodyLength:26, armholeDepth:9},
+    '2XL':{chest:48, waist:42, hip:50, bodyLength:27, armholeDepth:9.5},
+    '3XL':{chest:52, waist:46, hip:54, bodyLength:28, armholeDepth:10},
+  },
+  dress:{
+    XS: {bust:32, waist:26, hip:34, totalLength:52, sleeveLength:0},
+    S:  {bust:34, waist:28, hip:36, totalLength:54, sleeveLength:0},
+    M:  {bust:36, waist:30, hip:38, totalLength:56, sleeveLength:0},
+    L:  {bust:40, waist:34, hip:42, totalLength:58, sleeveLength:0},
+    XL: {bust:44, waist:38, hip:46, totalLength:60, sleeveLength:0},
+    '2XL':{bust:48, waist:42, hip:50, totalLength:62, sleeveLength:0},
+    '3XL':{bust:52, waist:46, hip:54, totalLength:64, sleeveLength:0},
+  },
+  skirt:{
+    XS: {waist:26, hip:34, skirtLength:24},
+    S:  {waist:28, hip:36, skirtLength:25},
+    M:  {waist:30, hip:38, skirtLength:26},
+    L:  {waist:34, hip:42, skirtLength:27},
+    XL: {waist:38, hip:46, skirtLength:28},
+    '2XL':{waist:42, hip:50, skirtLength:29},
+    '3XL':{waist:46, hip:54, skirtLength:30},
+  },
+  top:{
+    XS: {bust:32, waist:26, cropLength:14, strapWidth:1.5},
+    S:  {bust:34, waist:28, cropLength:15, strapWidth:1.5},
+    M:  {bust:36, waist:30, cropLength:16, strapWidth:2},
+    L:  {bust:40, waist:34, cropLength:17, strapWidth:2},
+    XL: {bust:44, waist:38, cropLength:18, strapWidth:2.5},
+    '2XL':{bust:48, waist:42, cropLength:19, strapWidth:2.5},
+    '3XL':{bust:52, waist:46, cropLength:20, strapWidth:3},
+  },
+  beanie:{XS:{headCirc:19},S:{headCirc:20},M:{headCirc:21},L:{headCirc:22},XL:{headCirc:23},'2XL':{headCirc:24},'3XL':{headCirc:25}},
+  mittens:{
+    XS: {handCirc:6,   handLength:6.5, thumbLength:2},
+    S:  {handCirc:6.5, handLength:7,   thumbLength:2.25},
+    M:  {handCirc:7,   handLength:7.5, thumbLength:2.5},
+    L:  {handCirc:8,   handLength:8,   thumbLength:2.75},
+    XL: {handCirc:9,   handLength:8.5, thumbLength:3},
+    '2XL':{handCirc:10, handLength:9,  thumbLength:3.25},
+    '3XL':{handCirc:11, handLength:9.5,thumbLength:3.5},
+  },
+  socks:{
+    XS: {footCirc:7,  footLength:8,   legHeight:5},
+    S:  {footCirc:7.5,footLength:9,   legHeight:6},
+    M:  {footCirc:8,  footLength:9.5, legHeight:6.5},
+    L:  {footCirc:9,  footLength:10,  legHeight:7},
+    XL: {footCirc:10, footLength:10.5,legHeight:7.5},
+    '2XL':{footCirc:11,footLength:11, legHeight:8},
+    '3XL':{footCirc:12,footLength:11.5,legHeight:8},
+  },
+  bag:{
+    XS: {width:10, height:10, handleDrop:8},
+    S:  {width:12, height:12, handleDrop:9},
+    M:  {width:14, height:14, handleDrop:10},
+    L:  {width:16, height:16, handleDrop:11},
+    XL: {width:18, height:18, handleDrop:12},
+    '2XL':{width:20,height:20,handleDrop:12},
+    '3XL':{width:22,height:22,handleDrop:14},
+  },
+  headband:{
+    XS: {headCirc:19, headbandWidth:2.5},
+    S:  {headCirc:20, headbandWidth:2.5},
+    M:  {headCirc:21, headbandWidth:3},
+    L:  {headCirc:22, headbandWidth:3},
+    XL: {headCirc:23, headbandWidth:3.5},
+    '2XL':{headCirc:24,headbandWidth:3.5},
+    '3XL':{headCirc:25,headbandWidth:4},
+  },
+  pillow:{
+    XS: {width:12, height:12},
+    S:  {width:14, height:14},
+    M:  {width:18, height:18},
+    L:  {width:20, height:20},
+    XL: {width:22, height:22},
+    '2XL':{width:24,height:24},
+    '3XL':{width:26,height:26},
+  },
+  dishcloth:{
+    XS: {width:7,  height:7},
+    S:  {width:8,  height:8},
+    M:  {width:9,  height:9},
+    L:  {width:10, height:10},
+    XL: {width:11, height:11},
+    '2XL':{width:12,height:12},
+    '3XL':{width:14,height:14},
+  },
+  basket:{
+    XS: {diameter:5,  height:4},
+    S:  {diameter:7,  height:5},
+    M:  {diameter:9,  height:6},
+    L:  {diameter:11, height:7},
+    XL: {diameter:13, height:8},
+    '2XL':{diameter:15,height:9},
+    '3XL':{diameter:17,height:10},
+  },
+  shawl:{
+    XS: {wingspan:40, centerDepth:16},
+    S:  {wingspan:48, centerDepth:18},
+    M:  {wingspan:56, centerDepth:22},
+    L:  {wingspan:64, centerDepth:26},
+    XL: {wingspan:72, centerDepth:30},
+    '2XL':{wingspan:80,centerDepth:34},
+    '3XL':{wingspan:88,centerDepth:38},
+  },
+  scarf:{
+    XS: {length:55, width:5},
+    S:  {length:60, width:6},
+    M:  {length:65, width:7},
+    L:  {length:70, width:8},
+    XL: {length:72, width:9},
+    '2XL':{length:76,width:10},
+    '3XL':{length:80,width:11},
+  },
+  blanket:{
+    XS: {width:28, length:36},
+    S:  {width:30, length:40},
+    M:  {width:36, length:48},
+    L:  {width:40, length:52},
+    XL: {width:45, length:56},
+    '2XL':{width:50,length:60},
+    '3XL':{width:54,length:72},
+  },
+};
+
+function updateMeasurements() {
+  const style = document.getElementById('style').value;
+  const size = document.getElementById('size').value;
+  const sec = document.getElementById('measureSection');
+  const flds = document.getElementById('measureFields');
+
+  // Always show measurements panel — pre-fill with size defaults if available
+  sec.style.display = 'block';
+  const defs = measureDefs[style] || ['Width','Height'];
+  const defaults = size !== 'custom' ? (sizeDefaults[style]?.[size] || {}) : {};
+
+  const labelToKey = {
+    'Chest circumference':'chest', 'Bust circumference':'bust',
+    'Waist circumference':'waist', 'Hip circumference':'hip',
+    'Body length':'bodyLength',    'Total length':'totalLength',
+    'Sleeve length':'sleeveLength','Armhole depth':'armholeDepth',
+    'Crop length':'cropLength',    'Strap width':'strapWidth',
+    'Skirt length':'skirtLength',
+    'Head circumference':'headCirc','Headband width':'headbandWidth',
+    'Wingspan':'wingspan',         'Center depth':'centerDepth',
+    'Hand circumference':'handCirc','Hand length':'handLength','Thumb length':'thumbLength',
+    'Foot circumference':'footCirc','Foot length':'footLength','Leg height':'legHeight',
+    'Width':'width','Height':'height','Length':'length',
+    'Handle drop':'handleDrop',    'Diameter':'diameter',
+    'Desired length':'length',     'Desired width':'width',
+    'Desired height (inches)':'desiredHeight',
+  };
+
+  flds.innerHTML = defs.map(m => {
+    const key = labelToKey[m] || m.toLowerCase().replace(/ /g,'');
+    const val = defaults[key] || '';
+    const isReadonly = size !== 'custom' && val !== '';
+    return `<div class="field">
+      <label>${m} <span style="font-size:0.65rem;opacity:0.6;text-transform:none;letter-spacing:0">(inches)</span></label>
+      <div style="position:relative">
+        <input type="number" step="0.25" min="0"
+          placeholder="${val || '—'}"
+          value="${val}"
+          data-measure="${m}"
+          data-default="${val}"
+          oninput="markEdited(this)"
+          style="${isReadonly ? 'border-style:dashed;opacity:0.8;' : ''}">
+        ${isReadonly ? `<span class="meas-default-badge" title="Standard size — edit to customise">std</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // reset zones when style changes in multi mode
+  if (composerMode === 'multi') {
+    zoneAssignments = [];
+    activeZoneIndex = null;
+    initMultiMode();
+  }
+}
+
+function markEdited(input) {
+  input.style.borderStyle = 'solid';
+  input.style.opacity = '1';
+  const badge = input.parentElement.querySelector('.meas-default-badge');
+  if (badge) { badge.textContent = 'edited'; badge.style.background = 'rgba(106,63,160,0.6)'; }
+}
+
+function getCustomMeasures() {
+  const inputs = document.querySelectorAll('#measureFields input');
+  const m = {};
+  inputs.forEach(i => {
+    const val = parseFloat(i.value) || parseFloat(i.dataset.default) || 0;
+    m[i.dataset.measure] = val;
+  });
+  return m;
+}
+
+// ===== GAUGE =====
+const gaugeMap = {
+  fingering:{sc:20,hdc:17,dc:13,tr:10,shell:10,bobble:10,puff:11,waffle:16,'v-stitch':11,granny:10,c2c:10,tapestry:18,'overlay-mosaic':13,'inset-mosaic':13,tss:15,tks:14,tps:14,tfs:13,tesm:12,tws:14,'tss-color':14,'tunisian-smock':12,'tunisian-rib':14,'tunisian-entrelac':11,'mosaic-granny':10,'woven-mosaic':12,bavarian:9,'planned-pooling':14,'lemon-peel':17,'catherine-wheel':10,'star':12,'pinwheel':10,'corner2corner':10,'spike':17,'crocodile':8,'hairpin':7,'broomstick':7},
+  sport:{sc:18,hdc:15,dc:11,tr:8,shell:9,bobble:9,puff:10,waffle:14,'v-stitch':10,granny:9,c2c:9,tapestry:16,'overlay-mosaic':11,'inset-mosaic':11,tss:13,tks:12,tps:12,tfs:11,tesm:10,tws:12,'tss-color':12,'tunisian-smock':10,'tunisian-rib':12,'tunisian-entrelac':9,'mosaic-granny':9,'woven-mosaic':10,bavarian:8,'planned-pooling':12,'lemon-peel':15,'catherine-wheel':9,'star':11,'pinwheel':9,'corner2corner':9,'spike':15,'crocodile':7,'hairpin':6,'broomstick':6},
+  dk:{sc:16,hdc:13,dc:10,tr:7,shell:8,bobble:8,puff:9,waffle:12,'v-stitch':9,granny:8,c2c:8,tapestry:14,'overlay-mosaic':10,'inset-mosaic':10,tss:11,tks:10,tps:10,tfs:9,tesm:9,tws:10,'tss-color':10,'tunisian-smock':9,'tunisian-rib':10,'tunisian-entrelac':8,'mosaic-granny':8,'woven-mosaic':9,bavarian:7,'planned-pooling':10,'lemon-peel':13,'catherine-wheel':8,'star':10,'pinwheel':8,'corner2corner':8,'spike':13,'crocodile':6,'hairpin':5,'broomstick':5},
+  worsted:{sc:14,hdc:11,dc:9,tr:6,shell:7,bobble:7,puff:8,waffle:10,'v-stitch':8,granny:7,c2c:7,tapestry:12,'overlay-mosaic':9,'inset-mosaic':9,tss:9,tks:8,tps:8,tfs:8,tesm:7,tws:8,'tss-color':8,'tunisian-smock':7,'tunisian-rib':8,'tunisian-entrelac':7,'mosaic-granny':7,'woven-mosaic':8,bavarian:6,'planned-pooling':8,'lemon-peel':11,'catherine-wheel':7,'star':9,'pinwheel':7,'corner2corner':7,'spike':11,'crocodile':5,'hairpin':4,'broomstick':4},
+  bulky:{sc:10,hdc:8,dc:6,tr:5,shell:5,bobble:5,puff:6,waffle:7,'v-stitch':6,granny:5,c2c:5,tapestry:9,'overlay-mosaic':6,'inset-mosaic':6,tss:7,tks:6,tps:6,tfs:6,tesm:5,tws:6,'tss-color':6,'tunisian-smock':5,'tunisian-rib':6,'tunisian-entrelac':5,'mosaic-granny':5,'woven-mosaic':6,bavarian:4,'planned-pooling':6,'lemon-peel':8,'catherine-wheel':5,'star':7,'pinwheel':5,'corner2corner':5,'spike':8,'crocodile':4,'hairpin':3,'broomstick':3},
+  'super-bulky':{sc:7,hdc:6,dc:4,tr:3,shell:4,bobble:4,puff:5,waffle:5,'v-stitch':4,granny:4,c2c:4,tapestry:7,'overlay-mosaic':4,'inset-mosaic':4,tss:5,tks:4,tps:4,tfs:4,tesm:4,tws:4,'tss-color':4,'tunisian-smock':4,'tunisian-rib':4,'tunisian-entrelac':4,'mosaic-granny':4,'woven-mosaic':4,bavarian:3,'planned-pooling':4,'lemon-peel':6,'catherine-wheel':4,'star':5,'pinwheel':4,'corner2corner':4,'spike':6,'crocodile':3,'hairpin':2,'broomstick':2},
+  jumbo:{sc:5,hdc:4,dc:3,tr:2,shell:3,bobble:3,puff:3,waffle:4,'v-stitch':3,granny:3,c2c:3,tapestry:5,'overlay-mosaic':3,'inset-mosaic':3,tss:4,tks:3,tps:3,tfs:3,tesm:3,tws:3,'tss-color':3,'tunisian-smock':3,'tunisian-rib':3,'tunisian-entrelac':3,'mosaic-granny':3,'woven-mosaic':3,bavarian:2,'planned-pooling':3,'lemon-peel':4,'catherine-wheel':3,'star':4,'pinwheel':3,'corner2corner':3,'spike':4,'crocodile':2,'hairpin':2,'broomstick':2},
+};
+const rowGaugeMap = {
+  fingering:{sc:24,hdc:18,dc:9,tr:6,shell:7,bobble:8,puff:9,waffle:14,'v-stitch':8,granny:8,c2c:8,tapestry:22,'overlay-mosaic':10,'inset-mosaic':10,tss:12,tks:11,tps:11,tfs:10,tesm:9,tws:11,'tss-color':10,'tunisian-smock':9,'tunisian-rib':11,'tunisian-entrelac':8,'mosaic-granny':7,'woven-mosaic':10,bavarian:7,'planned-pooling':12,'lemon-peel':18,'catherine-wheel':7,'star':9,'pinwheel':7,'corner2corner':7,'spike':20,'crocodile':5,'hairpin':3,'broomstick':3},
+  sport:{sc:20,hdc:15,dc:8,tr:5,shell:6,bobble:7,puff:8,waffle:12,'v-stitch':7,granny:7,c2c:7,tapestry:18,'overlay-mosaic':9,'inset-mosaic':9,tss:10,tks:9,tps:9,tfs:9,tesm:8,tws:9,'tss-color':9,'tunisian-smock':8,'tunisian-rib':9,'tunisian-entrelac':7,'mosaic-granny':6,'woven-mosaic':9,bavarian:6,'planned-pooling':10,'lemon-peel':15,'catherine-wheel':6,'star':8,'pinwheel':6,'corner2corner':6,'spike':17,'crocodile':4,'hairpin':3,'broomstick':3},
+  dk:{sc:18,hdc:13,dc:7,tr:4,shell:5,bobble:6,puff:7,waffle:10,'v-stitch':6,granny:6,c2c:6,tapestry:16,'overlay-mosaic':8,'inset-mosaic':8,tss:9,tks:8,tps:8,tfs:8,tesm:7,tws:8,'tss-color':8,'tunisian-smock':7,'tunisian-rib':8,'tunisian-entrelac':6,'mosaic-granny':5,'woven-mosaic':8,bavarian:5,'planned-pooling':9,'lemon-peel':13,'catherine-wheel':5,'star':7,'pinwheel':5,'corner2corner':5,'spike':15,'crocodile':4,'hairpin':2,'broomstick':2},
+  worsted:{sc:16,hdc:11,dc:5,tr:3,shell:4,bobble:5,puff:6,waffle:8,'v-stitch':5,granny:5,c2c:5,tapestry:14,'overlay-mosaic':7,'inset-mosaic':7,tss:8,tks:7,tps:7,tfs:7,tesm:6,tws:7,'tss-color':7,'tunisian-smock':6,'tunisian-rib':7,'tunisian-entrelac':5,'mosaic-granny':4,'woven-mosaic':7,bavarian:4,'planned-pooling':8,'lemon-peel':11,'catherine-wheel':4,'star':6,'pinwheel':4,'corner2corner':4,'spike':13,'crocodile':3,'hairpin':2,'broomstick':2},
+  bulky:{sc:12,hdc:8,dc:4,tr:2,shell:3,bobble:3,puff:4,waffle:6,'v-stitch':3,granny:3,c2c:3,tapestry:10,'overlay-mosaic':5,'inset-mosaic':5,tss:6,tks:5,tps:5,tfs:5,tesm:4,tws:5,'tss-color':5,'tunisian-smock':4,'tunisian-rib':5,'tunisian-entrelac':4,'mosaic-granny':3,'woven-mosaic':5,bavarian:3,'planned-pooling':5,'lemon-peel':8,'catherine-wheel':3,'star':5,'pinwheel':3,'corner2corner':3,'spike':9,'crocodile':2,'hairpin':2,'broomstick':2},
+  'super-bulky':{sc:8,hdc:6,dc:3,tr:2,shell:2,bobble:2,puff:3,waffle:4,'v-stitch':2,granny:2,c2c:2,tapestry:7,'overlay-mosaic':3,'inset-mosaic':3,tss:4,tks:4,tps:4,tfs:3,tesm:3,tws:4,'tss-color':4,'tunisian-smock':3,'tunisian-rib':4,'tunisian-entrelac':3,'mosaic-granny':2,'woven-mosaic':4,bavarian:2,'planned-pooling':4,'lemon-peel':5,'catherine-wheel':2,'star':4,'pinwheel':2,'corner2corner':2,'spike':6,'crocodile':2,'hairpin':1,'broomstick':1},
+  jumbo:{sc:5,hdc:4,dc:2,tr:1,shell:2,bobble:2,puff:2,waffle:3,'v-stitch':2,granny:2,c2c:2,tapestry:4,'overlay-mosaic':2,'inset-mosaic':2,tss:3,tks:2,tps:2,tfs:2,tesm:2,tws:2,'tss-color':2,'tunisian-smock':2,'tunisian-rib':2,'tunisian-entrelac':2,'mosaic-granny':2,'woven-mosaic':2,bavarian:1,'planned-pooling':2,'lemon-peel':3,'catherine-wheel':2,'star':3,'pinwheel':2,'corner2corner':2,'spike':4,'crocodile':1,'hairpin':1,'broomstick':1},
+};
+
+function getGauge(yarn, stitch) {
+  const y = gaugeMap[yarn] || gaugeMap['worsted'];
+  return y[stitch] || y['sc'] || 10;
+}
+function getRowGauge(yarn, stitch) {
+  const y = rowGaugeMap[yarn] || rowGaugeMap['worsted'];
+  return y[stitch] || y['sc'] || 10;
+}
+
+function round(n) { return Math.round(n); }
+function stObj(id) { return STITCHES.find(s => s.id === id) || STITCHES[0]; }
+
+// ===== AI IMAGE via Anthropic API =====
+async function generateImage(prompt, imgWrapId, textId) {
+  const wrap = document.getElementById(imgWrapId);
+  const txt = document.getElementById(textId);
+  wrap.innerHTML = `<div class="img-placeholder">🧶<span>Generating…</span></div>`;
+  txt.textContent = 'AI image loading…';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        messages: [{
+          role: 'user',
+          content: `Create a highly realistic, photographic-quality SVG illustration of: ${prompt}.
+
+Style requirements:
+- Photorealistic look with natural lighting, soft shadows, and depth
+- Use gradients (linearGradient, radialGradient) extensively to simulate 3D form and fabric texture
+- Show realistic yarn/fiber texture with subtle fine lines suggesting stitches
+- Use warm, natural photography-style lighting — bright highlight from top-left, soft shadow bottom-right
+- Rich, saturated but natural colours with multiple tonal variations (light, mid, shadow tones)
+- Background: soft blurred neutral (light warm grey or cream) — use a radialGradient for depth-of-field effect
+- The crochet item should look like a professional product photo — dimensional, tactile, beautiful
+- Add fine stitch detail lines to suggest the crochet texture
+
+Return ONLY valid SVG starting with <svg and ending with </svg>. viewBox="0 0 300 300". No markdown.`
+        }]
+      })
+    });
+
+    const data = await res.json();
+    const text = (data.content || []).map(b => b.text || '').join('');
+    const cleaned = text.replace(/```(?:svg|xml)?\n?/gi, '').replace(/```/g, '').trim();
+    const openIdx = cleaned.indexOf('<svg');
+    if (openIdx !== -1) {
+      let svgStr = cleaned.slice(openIdx);
+      if (!svgStr.includes('</svg>')) svgStr += '</svg>';
+      wrap.innerHTML = svgStr;
+      const svg = wrap.querySelector('svg');
+      if (svg) svg.style.cssText = 'width:100%;height:100%;display:block;';
+      txt.textContent = '✦ AI-generated preview';
+    } else {
+      wrap.innerHTML = `<div class="img-placeholder">🧶<span>Preview unavailable</span></div>`;
+      txt.textContent = '';
+    }
+  } catch(e) {
+    wrap.innerHTML = `<div class="img-placeholder">🧶<span>Preview unavailable</span></div>`;
+    txt.textContent = '';
+    console.error('Image gen error:', e);
+  }
+}
+
+// ===== PATTERN GENERATOR =====
+function getStyleLabel(s) {
+  const m = {sweater:'Pullover Sweater',cardigan:'Cardigan',vest:'Vest',top:'Crop Top',dress:'Dress',skirt:'Skirt',beanie:'Beanie Hat',scarf:'Scarf / Cowl',shawl:'Triangle Shawl',mittens:'Mittens',socks:'Socks',bag:'Tote Bag',headband:'Headband',blanket:'Blanket',dishcloth:'Dishcloth',pillow:'Pillow Cover',basket:'Storage Basket','amigurumi-bear':'Teddy Bear (Amigurumi)','amigurumi-bunny':'Bunny (Amigurumi)','amigurumi-cat':'Cat (Amigurumi)','amigurumi-elephant':'Elephant (Amigurumi)','amigurumi-dragon':'Dragon (Amigurumi)','amigurumi-doll':'Doll (Amigurumi)'};
+  return m[s] || s;
+}
+function isTunisian(s) { return s.cat === 'tunisian'; }
+function isMosaic(s) { return s.cat === 'mosaic'; }
+
+function generatePattern() {
+  const style = document.getElementById('style').value;
+  const yarn = document.getElementById('yarnWeight').value;
+  const hook = document.getElementById('hookSize').value;
+  const size = document.getElementById('size').value;
+  const skill = document.getElementById('skillLevel').value;
+  const color1 = document.getElementById('color1').value || 'Main Color';
+  const color2 = document.getElementById('color2').value || 'Contrast Color';
+
+  const isMulti = composerMode === 'multi' && zoneAssignments.length > 0;
+  const st = isMulti ? stObj(zoneAssignments[0].stitchId) : stObj(selectedStitch);
+  const stsP4 = getGauge(yarn, st.id);
+  const rowsP4 = getRowGauge(yarn, st.id);
+
+  let meas = getCustomMeasures();
+  // fill any zeros with size defaults as fallback
+  const sizeFallback = sizeDefaults[style]?.[size] || sizeDefaults['sweater']?.[size] || {};
+  Object.assign(meas, Object.fromEntries(Object.entries(sizeFallback).map(([k,v]) => [k, meas[k]||v])));
+
+  const title = getStyleLabel(style);
+  document.getElementById('outputTitle').textContent = title;
+
+  const yarnLabels = {fingering:'Fingering #1',sport:'Sport #2',dk:'DK #3',worsted:'Worsted #4',bulky:'Bulky #5','super-bulky':'Super Bulky #6',jumbo:'Jumbo #7'};
+  const stitchBadge = isMulti
+    ? zoneAssignments.map(z => stObj(z.stitchId).abbr).join(' + ')
+    : st.name;
+
+  document.getElementById('outputMeta').innerHTML = `
+    <span class="badge badge-gold">🧶 ${yarnLabels[yarn]||yarn}</span>
+    <span class="badge badge-sage">🪝 ${hook}</span>
+    <span class="badge badge-teal">${stitchBadge}</span>
+    <span class="badge badge-violet">Size ${size} · ${skill}</span>
+    ${isMulti ? `<span class="badge badge-gold">◈ ${zoneAssignments.length}-Zone Composition</span>` : ''}
+  `;
+
+  if (isMulti) {
+    document.getElementById('outputBody').innerHTML = buildMultiZoneBody(style, yarn, hook, size, zoneAssignments, meas, skill, color1, color2);
+  } else {
+    document.getElementById('outputBody').innerHTML = buildBodyHTML(style, yarn, hook, size, st, stsP4, rowsP4, meas, skill, color1, color2);
+  }
+
+  document.getElementById('outputWrap').classList.add('visible');
+  document.getElementById('outputWrap').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Suggest a project name
+  const nameInput = document.getElementById('projectNameInput');
+  if (nameInput && !nameInput.value) {
+    const stitchShort = isMulti ? 'Multi-Zone' : st.name.split(' ').slice(0,2).join(' ');
+    nameInput.value = `${title} — ${stitchShort}`;
+    nameInput.select();
+  }
+
+  const stitchDesc = isMulti ? zoneAssignments.map(z => stObj(z.stitchId).name).join(' and ') : st.name;
+  const stitchForImg = isMulti ? zoneAssignments[0] ? stObj(zoneAssignments[0].stitchId).name : stitchDesc : st.name;
+  const imgPrompt = `extreme macro closeup photograph of ${stitchForImg} crochet stitch texture, shot from directly above, ${color1} coloured yarn, shallow depth of field, soft studio lighting, every individual loop and yarn twist sharply visible, photorealistic textile photography, no hands, no background objects, just the stitch fabric filling the entire frame`;
+  generateImage(imgPrompt, 'imgWrap', 'imgLoadingText');
+}
+
+// ===== MULTI-ZONE PATTERN BUILDER =====
+function buildMultiZoneBody(style, yarn, hook, size, zones, meas, skill, c1, c2) {
+  const yardage = estimateYardage(style, yarn, size, meas);
+  const isAmigurumi = style.startsWith('amigurumi');
+
+  // Build compatibility notes
+  const hasTunisian = zones.some(z => stObj(z.stitchId).cat === 'tunisian');
+  const hasMosaic = zones.some(z => stObj(z.stitchId).cat === 'mosaic');
+
+  const tunNote = hasTunisian ? `<div class="tunisian-note">⟳ <strong>Tunisian zones require</strong> a Tunisian/Afghan hook with a stopper or cable extension. Do not turn between passes.</div>` : '';
+  const mosNote = hasMosaic ? `<div class="mosaic-note">◈ <strong>Mosaic zones</strong> use two colors per zone. Only one color per row — carry unused color along edge.</div>` : '';
+
+  // Materials
+  const allAbbrs = [...new Set(zones.map(z => stObj(z.stitchId).abbr))].join(', ');
+  const matHtml = `
+    ${tunNote}${mosNote}
+    <ul>
+      <li>Approx. <strong>${yardage} yards</strong> of ${yarn} weight yarn total</li>
+      ${zones.map(z => `<li><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${z.color};margin-right:6px;vertical-align:middle;"></span><strong>${z.zoneName}:</strong> ${stObj(z.stitchId).name}</li>`).join('')}
+      <li>Hook: <strong>${hook}</strong>${hasTunisian ? ' + Tunisian hook/cable' : ''}</li>
+      <li>Yarn needle, stitch markers, scissors</li>
+      ${style==='cardigan'?'<li>5–7 decorative buttons</li>':''}
+    </ul>`;
+
+  // Gauge table
+  const uniqueSts = [...new Map(zones.map(z => [z.stitchId, stObj(z.stitchId)])).values()];
+  const gaugeRows = uniqueSts.map(st => {
+    const g = getGauge(yarn, st.id), rg = getRowGauge(yarn, st.id);
+    return `<tr><td style="padding:0.3rem 0.6rem;font-weight:600;color:#3a3050">${st.name}</td><td style="padding:0.3rem 0.6rem;text-align:center">${st.abbr}</td><td style="padding:0.3rem 0.6rem;text-align:center">${g}/4"</td><td style="padding:0.3rem 0.6rem;text-align:center">${rg}/4"</td></tr>`;
+  }).join('');
+
+  const gaugeHtml = `
+    <p style="margin-bottom:0.6rem;font-size:0.88rem;color:#3a3050">Always swatch each stitch before starting. Adjust hook per zone if needed.</p>
+    <table style="border-collapse:collapse;width:100%;font-size:0.85rem;background:var(--parchment);border-radius:4px;overflow:hidden">
+      <tr style="background:var(--forest);color:rgba(244,240,250,0.8)">
+        <th style="padding:0.4rem 0.6rem;text-align:left">Stitch</th>
+        <th style="padding:0.4rem 0.6rem">Abbr</th>
+        <th style="padding:0.4rem 0.6rem">Sts/4"</th>
+        <th style="padding:0.4rem 0.6rem">Rows/4"</th>
+      </tr>
+      ${gaugeRows}
+    </table>`;
+
+  // Abbreviations
+  const abbrList = uniqueSts.map(st => `${st.abbr}=${st.name}`).join(' | ');
+  const abbrHtml = `<div class="abbrev-box">ch=chain | sc=single crochet | sl st=slip stitch | inc=increase | dec=decrease | ${abbrList} | RS=right side | WS=wrong side</div>`;
+
+  // Zone-by-zone instructions
+  const zoneInstHtml = zones.map((z, i) => {
+    const st = stObj(z.stitchId);
+    const stsPI = getGauge(yarn, st.id) / 4;
+    const rowsPI = getRowGauge(yarn, st.id) / 4;
+    const isTun = st.cat === 'tunisian';
+    const isMos = st.cat === 'mosaic';
+    const notes = buildZoneNotes(style, z, st, stsPI, rowsPI, meas, i);
+
+    return `<div class="psection full-span" style="border-left:3px solid ${z.color};padding-left:1rem;margin-bottom:1.5rem;">
+      <h3 style="color:${z.color}">${z.zoneName}</h3>
+      <div style="display:flex;gap:0.6rem;align-items:center;margin-bottom:0.7rem;flex-wrap:wrap;">
+        <span class="badge badge-violet">${st.name} (${st.abbr})</span>
+        <span class="badge badge-sage">${getGauge(yarn, st.id)} sts/4"</span>
+        ${isTun ? '<span class="badge badge-teal">Tunisian Hook Required</span>' : ''}
+        ${isMos ? '<span class="badge badge-violet">2-Color Mosaic</span>' : ''}
+      </div>
+      ${notes}
+    </div>`;
+  }).join('');
+
+  // Transition notes
+  const transitionHtml = `<div class="psection full-span">
+    <h3>Joining Zones & Transitions</h3>
+    <ul>
+      <li>When switching from one stitch pattern to another, work 1 row of sc to create a clean transition line and even out the stitch height differences.</li>
+      <li>If switching from Tunisian to standard crochet: finish the return pass, then begin working rows normally turning at each end.</li>
+      ${zones.length > 1 ? `<li>Use a removable stitch marker at the last row of each zone so you can easily count and reference your work.</li>` : ''}
+      <li>Block each section firmly — different stitch patterns can draw in or stretch out differently, and blocking ensures everything lies flat and even.</li>
+    </ul>
+  </div>`;
+
+  // Finishing
+  const finHtml = `<div class="psection full-span">
+    <h3>Finishing</h3>
+    <ol>
+      <li>Weave in all ends from each zone change.</li>
+      <li>Wet block all pieces pinned to correct measurements — especially important with mixed stitch patterns.</li>
+      ${['sweater','cardigan','vest','dress'].includes(style)?'<li>Seam shoulders, then side seams.</li>':''}
+      ${['sweater','cardigan'].includes(style)?'<li>Set in sleeves, seam from underarm to cuff.</li>':''}
+      ${style==='cardigan'?'<li>Sew on buttons.</li>':''}
+      <li>Optionally reinforce zone transition rows with a surface slip stitch for a decorative seam.</li>
+    </ol>
+  </div>`;
+
+  const sections = [
+    {title:'Materials', full:false, html:matHtml},
+    {title:'Gauge per Stitch', full:false, html:gaugeHtml},
+    {title:'Abbreviations', full:true, html:abbrHtml},
+  ];
+
+  const sectionsHtml = sections.map(s => `<div class="psection ${s.full?'full-span':''}">${'<h3>'+s.title+'</h3>'}${s.html}</div>`).join('');
+
+  return `<div class="pattern-grid">
+    ${sectionsHtml}
+    ${zoneInstHtml}
+    ${transitionHtml}
+    ${finHtml}
+  </div>`;
+}
+
+function buildZoneNotes(style, zone, st, stsPI, rowsPI, meas, zoneIndex) {
+  const abbr = st.abbr;
+  const turnCh = st.id==='dc'||st.id==='dc-blo'?3:st.id==='tr'?4:st.id==='hdc'?2:1;
+  const isTun = st.cat === 'tunisian';
+
+  const zid = zone.zoneId;
+
+  // compute approximate rows/sts for known zones
+  const getSts = (inches) => Math.round(inches * stsPI);
+  const getRows = (inches) => Math.round(inches * rowsPI);
+
+  const chest  = meas.chest || meas['Chest circumference'] || meas.bust || meas['Bust circumference'] || 36;
+  const waist  = meas.waist || meas['Waist circumference'] || (chest - 6);
+  const hip    = meas.hip   || meas['Hip circumference']   || (chest + 2);
+  const bodyLen = meas.bodyLength || meas['Body length'] || meas.totalLength || meas['Total length'] || 26;
+  const sleeveLen = meas.sleeveLength || meas['Sleeve length'] || 19;
+  const armhole = meas.armholeDepth || meas['Armhole depth'] || 8;
+
+  const zoneGuides = {
+    body:         `<div class="row-block"><strong>Foundation (at hip):</strong> Ch ${getSts(hip/2)+1}. Work ${abbr} across. (${getSts(hip/2)} sts)</div><div class="row-block"><strong>Hip to waist:</strong> Dec 1 st each end every few rows until ${getSts(waist/2)} sts. Then inc back to ${getSts(chest/2)} sts for bust/chest.</div><div class="row-block"><strong>Main body:</strong> Work in ${st.name} for ${getRows(bodyLen - armhole)} rows total.</div>`,
+    yoke:         `<div class="row-block"><strong>Yoke / Shoulders:</strong> After armhole bind-off, work ${getRows(armhole)} rows of ${st.name}. Dec for neck shaping as given in full pattern.</div>`,
+    sleeves:      `<div class="row-block"><strong>Foundation:</strong> Ch ${getSts(8.5)+1}. Work ${abbr} across. (${getSts(8.5)} sts)</div><div class="row-block"><strong>Sleeve body:</strong> Inc 1 st each end every 6th row until ${getSts(chest*0.47)} sts. Work ${getRows(sleeveLen)} rows total in ${st.name}.</div>`,
+    cuffs:        `<div class="row-block"><strong>Cuff (2"):</strong> Foundation ch ${getSts(8.5)+1}. Work ${getRows(2)} rows of ${st.name}. Fasten off, join to sleeve.</div>`,
+    hem:          `<div class="row-block"><strong>Hem band (1.5"):</strong> Pick up ${getSts(chest/2)} sts along bottom edge. Work ${getRows(1.5)} rows of ${st.name}. Bind off.</div>`,
+    neckband:     `<div class="row-block"><strong>Neckband:</strong> Pick up approx. ${getSts(14)} sts around neckline. Join to work in the round. Work ${getRows(1)} rounds of ${st.name}.</div>`,
+    border:       `<div class="row-block"><strong>Border:</strong> Join yarn at corner. Work ${st.name} evenly around all edges, 3 sts in each corner. Work 2–3 rounds total.</div>`,
+    crown:        `<div class="row-block"><strong>Crown (magic ring):</strong> MR, 6 ${abbr} into ring. Inc +6 sts/rnd until correct circumference.</div>`,
+    brim:         `<div class="row-block"><strong>Brim (2"):</strong> Work ${getRows(2)} rounds of ${st.name} — work in BLO for ribbing texture if preferred.</div>`,
+    center:       `<div class="row-block"><strong>Center body:</strong> Ch ${getSts(7)+1}. Work ${abbr} across. Continue in ${st.name} for main length.</div>`,
+    ends:         `<div class="row-block"><strong>End sections (3" each):</strong> Work ${getRows(3)} rows of ${st.name} at each end of the piece.</div>`,
+    'inner-border': `<div class="row-block"><strong>Inner border (2 rounds):</strong> Join yarn at edge, work ${st.name} around, 3 sts in each corner.</div>`,
+    'outer-border': `<div class="row-block"><strong>Outer border (3 rounds):</strong> Continue from inner border or rejoin. Work ${st.name} around all sides.</div>`,
+    corner:       `<div class="row-block"><strong>Corners:</strong> Work 3 ${abbr} in each corner stitch each round to maintain square shape.</div>`,
+    waistband:    `<div class="row-block"><strong>Waistband (1.5"):</strong> Ch ${getSts(waist/2)+1}. Work ${getRows(1.5)} rows of ${st.name}. Waist = ${waist}".</div>`,
+    bodice:       `<div class="row-block"><strong>Bodice:</strong> Ch ${getSts(chest/2)+1}. Work ${getRows(bodyLen*0.4)} rows of ${st.name}. Bust = ${chest}".</div>`,
+    skirt:        `<div class="row-block"><strong>Skirt (hem to waist):</strong> Ch ${getSts(hip/2)+1}. Dec from ${getSts(hip/2)} sts (hip ${hip}") to ${getSts(waist/2)} sts (waist ${waist}") over ${getRows(bodyLen*0.6)} rows of ${st.name}.</div>`,
+    base:         `<div class="row-block"><strong>Base/bottom:</strong> Work in rounds of ${abbr} starting with magic ring for circular base, or ch foundation for rectangular.</div>`,
+    sides:        `<div class="row-block"><strong>Sides/walls:</strong> At base edge, work ${getRows(6)} rounds of ${st.name} straight up.</div>`,
+    rim:          `<div class="row-block"><strong>Rim (1"):</strong> Work ${getRows(1)} rounds of ${st.name} at top. Fasten off firmly.</div>`,
+    hand:         `<div class="row-block"><strong>Hand body:</strong> Ch ${getSts(8)+1}. Work ${getRows(8)} rows of ${st.name} for main hand section.</div>`,
+    thumb:        `<div class="row-block"><strong>Thumb:</strong> Pick up ${getSts(3)} sts at thumb gap. Work ${getRows(2.5)} rounds of ${st.name}. Dec to close.</div>`,
+    cuff:         `<div class="row-block"><strong>Cuff (2.5"):</strong> Work ${getRows(2.5)} rows of ${st.name} at wrist. Fasten off.</div>`,
+    leg:          `<div class="row-block"><strong>Leg:</strong> Ch ${getSts(9)+1}. Work ${getRows(7)} rounds of ${st.name} for leg.</div>`,
+    heel:         `<div class="row-block"><strong>Heel flap:</strong> Work ${getRows(2.5)} rows of ${st.name} back and forth on half the stitches. Turn heel with standard dec method.</div>`,
+    foot:         `<div class="row-block"><strong>Foot:</strong> Pick up sts along heel, rejoin instep. Work ${getRows(9)} rounds of ${st.name} for foot length.</div>`,
+    toe:          `<div class="row-block"><strong>Toe:</strong> Dec every other round until 8 sts remain. Kitchener stitch or sl st to close.</div>`,
+  };
+
+  const instruction = zoneGuides[zid] ||
+    `<div class="row-block"><strong>${zone.zoneName}:</strong> Work this section in ${st.name} (${abbr}). Chain appropriate number of stitches for the width, then work in rows or rounds as required by the overall construction.</div>`;
+
+  const fwdReturn = isTun ? `<div class="row-block" style="background:rgba(62,122,80,0.1);border-left-color:var(--sage)"><strong>Tunisian method:</strong> Forward Pass — pick up loops in each vertical bar. Return Pass — ch1, *yo, pull through 2 loops* across.</div>` : '';
+
+  return fwdReturn + instruction;
+}
+
+function buildBodyHTML(style, yarn, hook, size, st, stsP4, rowsP4, meas, skill, c1, c2) {
+  const tunisian = isTunisian(st);
+  const mosaic = isMosaic(st);
+  const stsPI = stsP4 / 4; // stitches per inch
+  const rowsPI = rowsP4 / 4;
+
+  const isAmigurumi = style.startsWith('amigurumi');
+  if (isAmigurumi) {
+    return buildAmigurumiBody(style, yarn, hook, st, stsPI, rowsPI, size, c1, c2);
+  }
+
+  let sections = [];
+
+  // TUNISIAN NOTE
+  const tunNote = tunisian ? `<div class="tunisian-note">⟳ <strong>Tunisian Crochet Note:</strong> You will need a Tunisian / Afghan hook (longer with a stopper end) or a regular hook with an extension cable. Each row has two passes: <strong>Forward Pass</strong> (pick up loops) and <strong>Return Pass</strong> (work loops off). Do not turn your work between passes.</div>` : '';
+  const mosNote = mosaic ? `<div class="mosaic-note">◈ <strong>Mosaic Crochet Note:</strong> Use two colors (${c1} = Color A, ${c2} = Color B). Work only one color per row/round. Carry the unused color along the edge or drop it. Each color is used for 2 rows, then switched.</div>` : '';
+
+  // MATERIALS
+  const yardage = estimateYardage(style, yarn, size, meas);
+  const extraMaterials = tunisian ? `<li>Tunisian / Afghan crochet hook (${hook}) or hook + cable extension</li>` 
+    : mosaic ? `<li>2 balls of yarn: Color A (${c1}) and Color B (${c2})</li>` : '';
+  sections.push({title:'Materials', full: false, html:`
+    ${tunNote}${mosNote}
+    <ul>
+      <li>Approx. <strong>${yardage} yards</strong> of ${yarn} weight yarn</li>
+      ${extraMaterials}
+      <li>Crochet hook: <strong>${hook}</strong></li>
+      <li>Yarn needle, stitch markers, scissors</li>
+      ${style==='cardigan'?'<li>5–7 decorative buttons</li>':''}
+    </ul>`});
+
+  // GAUGE
+  sections.push({title:'Gauge & Swatch', full:false, html:`
+    <p><strong>${stsP4} ${st.abbr} × ${rowsP4} rows/passes = 4" × 4"</strong></p>
+    <p style="margin-top:0.5rem">Always make a swatch before starting. Block it to size. Adjust hook if needed — go up a size if too tight, down if too loose.</p>`});
+
+  // ABBREVIATIONS
+  const baseAbbr = tunisian
+    ? `ch=chain | Tss=Tunisian Simple Stitch | Tks=Tunisian Knit St | Tps=Tunisian Purl St | RetP=Return Pass | VP=Vertical Post | st=stitch | inc=increase | dec=decrease`
+    : mosaic
+    ? `ch=chain | ${st.abbr}=${st.name} | sc=single crochet | sl st=slip stitch | CA=Color A (${c1}) | CB=Color B (${c2}) | RS=right side | WS=wrong side | rep=repeat | sk=skip`
+    : `ch=chain | ${st.abbr}=${st.name} | sc=single crochet | sl st=slip stitch | inc=increase | dec=decrease | BLO=back loop only | FLO=front loop only | RS=right side | rep=repeat`;
+  sections.push({title:'Abbreviations', full:true, html:`<div class="abbrev-box">${baseAbbr}</div>`});
+
+  // MAIN PATTERN per style
+  const body = buildMainPattern(style, yarn, hook, size, st, stsPI, rowsPI, meas, skill, c1, c2, tunisian, mosaic);
+  sections = sections.concat(body);
+
+  // FINISHING
+  sections.push({title:'Finishing', full:false, html:`
+    <ol>
+      <li>Weave in all ends securely.</li>
+      <li>Wet block or steam block to measurements.</li>
+      ${style==='cardigan'?'<li>Sew on buttons opposite buttonholes.</li>':''}
+      ${['sweater','cardigan','vest','dress'].includes(style)?'<li>Seam shoulder seams, then side seams.</li>':''}
+      ${['sweater','cardigan'].includes(style)?'<li>Set in sleeves; seam sleeve from underarm to cuff.</li>':''}
+      <li>Optionally add a border of sc or crab stitch (reverse sc) around edges for a polished finish.</li>
+    </ol>`});
+
+  const grid = sections.map(s => `
+    <div class="psection ${s.full ? 'full-span' : ''}">
+      <h3>${s.title}</h3>
+      ${s.html}
+    </div>`).join('');
+
+  return `<div class="pattern-grid">${grid}</div><button class="print-btn" onclick="window.print()">⎙ Print Pattern</button>`;
+}
+
+function buildMainPattern(style, yarn, hook, size, st, stsPI, rowsPI, meas, skill, c1, c2, tunisian, mosaic) {
+  const sections = [];
+  const abbr = st.abbr;
+  const turnCh = st.id==='dc'||st.id==='dc-blo'?3 : st.id==='tr'?4 : st.id==='hdc'||st.id==='hdc-blo'?2 : 1;
+  const mosaicRow = mosaic
+    ? `<div class="row-block"><strong>Mosaic Method:</strong> Work 2 rows with Color A, then 2 rows with Color B. In each row, sk the opposite color's stitches and ${abbr} normally into your color's stitches. Sl st into carried color stitches you skip.</div>` : '';
+
+  if (style === 'sweater' || style === 'cardigan' || style === 'vest') {
+    const chest = meas.chest || meas['Chest circumference'] || (size==='XS'?32:size==='S'?34:size==='M'?36:size==='L'?40:size==='XL'?44:size==='2XL'?48:52);
+    const waist = meas.waist || meas['Waist circumference'] || (chest - 6);
+    const hip   = meas.hip   || meas['Hip circumference']   || (chest + 2);
+    const bLen = meas.bodyLength || meas['Body length'] || 26;
+    const sLen = meas.sleeveLength || meas['Sleeve length'] || 19;
+    const arm = meas.armholeDepth || meas['Armhole depth'] || 8;
+    const co        = Math.round(chest/2 * stsPI);
+    const waistSts  = Math.round(waist/2 * stsPI);
+    const hipSts    = Math.round(hip/2 * stsPI);
+    const bRows     = Math.round(bLen * rowsPI);
+    const armRows   = Math.round(arm * rowsPI);
+    const waistRow  = Math.round(bLen * 0.35 * rowsPI);   // waist at ~35% up body
+    const hipRow    = Math.round(bLen * 0.12 * rowsPI);   // hip at ~12% up body
+    const slCO   = Math.round(8.5 * stsPI);
+    const slFull = Math.round(chest * 0.47 * stsPI);
+    const slRows = Math.round(sLen * rowsPI);
+
+    const hasWaistShaping = Math.abs(co - waistSts) >= 2;
+    const hasHipShaping   = Math.abs(co - hipSts) >= 2;
+
+    const fwdPass = tunisian ? `<div class="row-block"><strong>Forward Pass:</strong> Skip first VP, insert hook in each VP, pull up loop, leave all loops on hook. (${co} loops)</div><div class="row-block"><strong>Return Pass:</strong> Ch 1, *yo, pull through 2 loops* rep to end. (1 loop remains)</div>` : '';
+
+    // Hip-to-waist dec calculation
+    const hipDecRows = waistRow - hipRow;
+    const hipDecPerSide = co > waistSts ? Math.floor((co - waistSts) / 2) : 0;
+    const hipDecEvery   = hipDecRows > 0 && hipDecPerSide > 0 ? Math.max(1, Math.floor(hipDecRows / hipDecPerSide)) : 0;
+
+    // Waist-to-chest inc calculation
+    const waistIncRows = (bRows - armRows) - waistRow;
+    const waistIncPerSide = co > waistSts ? Math.floor((co - waistSts) / 2) : 0;
+    const waistIncEvery   = waistIncRows > 0 && waistIncPerSide > 0 ? Math.max(1, Math.floor(waistIncRows / waistIncPerSide)) : 0;
+
+    const shapingHint = hasWaistShaping
+      ? `<div class="row-block" style="background:rgba(155,114,208,0.08);border-left-color:var(--violet)">
+          <strong>✦ Waist &amp; Hip Shaping included</strong> — Bust ${chest}", Waist ${waist}", Hip ${hip}"
+          <br>Starting sts (hip level): <strong>${hipSts}</strong> → Dec to waist: <strong>${waistSts}</strong> → Inc to bust: <strong>${co}</strong>
+        </div>` : '';
+
+    const hipShaping = hasHipShaping && hipSts > co
+      ? `<div class="row-block"><strong>Hip shaping (rows 1–${hipRow}):</strong> Work ${hipSts} sts. Dec 1 st each end every ${hipDecEvery > 0 ? hipDecEvery+'th' : 'other'} row ${hipDecPerSide} times until ${co} sts for bust.</div>`
+      : hasHipShaping
+      ? `<div class="row-block"><strong>Start at hip (row 1):</strong> Ch ${hipSts+1}. Work ${abbr} across. (${hipSts} sts)</div>
+         <div class="row-block"><strong>Hip to waist (rows 1–${hipRow}):</strong> Dec 1 st each end every ${hipDecEvery > 0 ? hipDecEvery+'th' : 'other'} row ${hipDecPerSide} times. (${waistSts} sts at waist)</div>`
+      : '';
+
+    const waistToChest = hasWaistShaping
+      ? `<div class="row-block"><strong>Waist to bust (rows ${waistRow+1}–${bRows-armRows}):</strong> Inc 1 st each end every ${waistIncEvery > 0 ? waistIncEvery+'th' : 'other'} row ${waistIncPerSide} times. (${co} sts)</div>`
+      : '';
+
+    const startSts = hasHipShaping ? hipSts : co;
+    const startCh  = startSts + 1;
+
+    sections.push({title:'Back Panel', full:false, html:`
+      ${shapingHint}
+      ${mosaicRow}
+      <div class="row-block"><strong>Foundation:</strong> ${tunisian?`Ch ${startCh}. Forward Pass: pick up ${startSts} loops.`:`Ch ${startCh}. Row 1: ${abbr} in ${turnCh==='1'?'2nd':'4th'} ch from hook, ${abbr} across. Turn. (${startSts} sts)`}</div>
+      ${fwdPass}
+      ${hipShaping}
+      ${hasWaistShaping ? `<div class="row-block"><strong>Waist (row ${hipRow}):</strong> Work even — ${waistSts} sts at narrowest point.</div>` : ''}
+      ${waistToChest}
+      <div class="row-block"><strong>Work even</strong> to row ${bRows - armRows}. (${co} sts)</div>
+      <div class="row-block"><strong>Armhole Shaping (rows ${bRows-armRows+1}–${bRows}):</strong> Bind off ${Math.round(co*0.08)} sts each end. Dec 1 st each end every RS row ${Math.round(co*0.03)} times. (${Math.round(co*0.85)} sts)</div>
+      <div class="row-block"><strong>Shoulder/Neck:</strong> Work ${Math.round(co*0.3)} sts; bind off center ${Math.round(co*0.25)} sts; work remaining shoulder. Fasten off.</div>`});
+
+    sections.push({title:'Front Panel', full:false, html:`
+      <p>Work same as Back to armhole shaping (including all hip/waist shaping). Then:</p>
+      <div class="row-block"><strong>Neck Shaping:</strong> Work to center ${Math.round(co*0.25)} sts; attach 2nd yarn; work to end.</div>
+      <div class="row-block"><strong>Dec rows:</strong> Dec 1 st each neck edge every RS row ${Math.round(armRows*0.4)} times. Work to same length as Back.</div>
+      ${style==='cardigan'?'<p style="margin-top:0.5rem"><em>Cardigan: Work as two separate halves. Button band: work 3 rows sc along front edge; add buttonholes on row 2.</em></p>':''}`});
+
+    if (style !== 'vest') {
+      sections.push({title:'Sleeves (make 2)', full:false, html:`
+        <div class="row-block"><strong>Foundation:</strong> Ch ${slCO+1}. Row 1: ${abbr} across. (${slCO} sts)</div>
+        <div class="row-block"><strong>Inc Rows:</strong> Inc 1 st each end every 6th row ${Math.round((slFull-slCO)/2)} times. (${slFull} sts)</div>
+        <div class="row-block"><strong>Work even</strong> until sleeve measures ${sLen}".</div>
+        <div class="row-block"><strong>Cap:</strong> Bind off ${Math.round(slCO*0.1)} sts each end. Dec 1 st each end every RS row until ${Math.round(slCO*0.15)} sts remain. Bind off.</div>`});
+    }
+
+  } else if (style === 'dress') {
+    const bust   = meas.bust || meas['Bust circumference']  || meas.chest || 36;
+    const waist  = meas.waist  || meas['Waist circumference'] || (bust - 6);
+    const hip    = meas.hip    || meas['Hip circumference']   || (bust + 2);
+    const tLen   = meas.totalLength || meas['Total length'] || 56;
+    const bustSts  = Math.round(bust/2 * stsPI);
+    const waistSts = Math.round(waist/2 * stsPI);
+    const hipSts   = Math.round(hip/2 * stsPI);
+    const totalRows = Math.round(tLen * rowsPI);
+    const skirtRows = Math.round(tLen * 0.55 * rowsPI);
+    const bodiceRows = totalRows - skirtRows;
+    const waistRow  = Math.round(skirtRows * 0.85);
+
+    sections.push({title:'Dress — Skirt (work bottom up)', full:false, html:`
+      <div class="row-block" style="background:rgba(155,114,208,0.08);border-left-color:var(--violet)">
+        <strong>✦ Measurements:</strong> Bust ${bust}", Waist ${waist}", Hip ${hip}", Total length ${tLen}"
+      </div>
+      <div class="row-block"><strong>Foundation:</strong> Ch ${Math.round(hip * stsPI)+1}. Work ${abbr} across. (${Math.round(hip * stsPI)} sts — full hip circumference in the round)</div>
+      <div class="row-block"><strong>Skirt shaping:</strong> Dec 1 st each side every ${Math.max(2,Math.floor(waistRow / Math.max(1, hipSts - waistSts)))} rows. Work ${skirtRows} rows total, ending with ${waistSts} sts at waist.</div>
+      <div class="row-block"><strong>Waist:</strong> At row ${waistRow}, work 1 row sc or BLO for a waistband seam line. (${waistSts} sts)</div>`});
+
+    sections.push({title:'Dress — Bodice', full:false, html:`
+      <div class="row-block"><strong>Continue from waist:</strong> Inc to ${bustSts} sts over ${Math.round(bodiceRows * 0.3)} rows.</div>
+      <div class="row-block"><strong>Bodice body:</strong> Work even for ${Math.round(bodiceRows * 0.5)} rows. (${bustSts} sts)</div>
+      <div class="row-block"><strong>Armhole:</strong> Bind off ${Math.round(bustSts*0.08)} sts each side. Work ${Math.round(bodiceRows * 0.2)} rows for yoke. Shape neck.</div>`});
+
+  } else if (style === 'skirt') {
+    const waist  = meas.waist || meas['Waist circumference'] || 30;
+    const hip    = meas.hip   || meas['Hip circumference']   || 38;
+    const sLen   = meas.skirtLength || meas['Skirt length']  || 26;
+    const waistSts = Math.round(waist * stsPI);
+    const hipSts   = Math.round(hip * stsPI);
+    const totalRows = Math.round(sLen * rowsPI);
+    const hipRow    = Math.round(totalRows * 0.25); // hip is at about 25% up from hem
+    const incPerSide = Math.max(0, Math.round((hipSts - waistSts) / 2));
+
+    sections.push({title:'Skirt Pattern (worked bottom up)', full:true, html:`
+      <div class="row-block" style="background:rgba(155,114,208,0.08);border-left-color:var(--violet)">
+        <strong>✦ Measurements:</strong> Waist ${waist}", Hip ${hip}", Length ${sLen}"
+      </div>
+      <div class="row-block"><strong>Foundation (hem):</strong> Ch ${hipSts + 1}. Join to work in the round. (${hipSts} sts)</div>
+      <div class="row-block"><strong>Hem to hip (rows 1–${hipRow}):</strong> Work even in ${abbr}. (${hipSts} sts)</div>
+      <div class="row-block"><strong>Hip to waist (rows ${hipRow+1}–${totalRows - Math.round(totalRows*0.08)}):</strong> Dec 1 st each side every ${Math.max(1, Math.floor((totalRows - hipRow) / Math.max(1, incPerSide)))} rows, ${incPerSide} times total. (${waistSts} sts)</div>
+      <div class="row-block"><strong>Waistband (last ${Math.round(totalRows * 0.08)} rows):</strong> Work ${Math.round(totalRows * 0.08)} rows of ${abbr}-BLO for ribbed waistband, or sc for a flat band. Thread elastic or ribbon through if desired.</div>
+      <div class="row-block"><strong>Optional A-line hem border:</strong> Join at hem, work 2 rounds sc with 1 extra st at each seam point.</div>`});
+
+  } else if (style === 'beanie') {
+    const circ = meas.headCirc || meas['Head circumference'] || 21;
+    const targetSts = Math.round(circ * stsPI);
+    const bodyRows = Math.round(6.5 * rowsPI);
+    sections.push({title:'Crown (work in rounds)', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Round 1:</strong> Magic ring, ch ${turnCh}, 6 ${abbr} into ring, sl st to join. (6 sts)</div>
+      <div class="row-block"><strong>Round 2:</strong> 2 ${abbr} in each st. (12 sts)</div>
+      <div class="row-block"><strong>Round 3:</strong> *1 ${abbr}, 2 ${abbr} in next st* rep. (18 sts)</div>
+      <div class="row-block"><strong>Continue Inc</strong> (+6 sts/round) until ${targetSts} sts.</div>
+      <div class="row-block"><strong>Body (${bodyRows} rounds):</strong> Work even in ${abbr} until hat measures 6.5" from crown.</div>
+      <div class="row-block"><strong>Brim:</strong> Work 2" of ${abbr}-BLO for a folded brim OR work 1 rnd sl st. Fasten off.</div>`});
+
+  } else if (style === 'scarf') {
+    const len = meas.length || meas['Desired length'] || 65;
+    const wid = meas.width || meas['Desired width'] || 7;
+    const co = Math.round(wid * stsPI);
+    const rows = Math.round(len * rowsPI);
+    sections.push({title:'Pattern', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Foundation:</strong> Ch ${co + turnCh}. Row 1: ${abbr} in ${turnCh+1}th ch from hook, ${abbr} across. Turn. (${co} sts)</div>
+      <div class="row-block"><strong>Rows 2–${rows}:</strong> Ch ${turnCh}, ${abbr} across. Turn. (${co} sts)</div>
+      <p style="margin-top:0.6rem">Work until scarf measures <strong>${len}"</strong>. Border: 1 rnd sc around all edges, 3 sc in each corner.</p>`});
+
+  } else if (style === 'shawl') {
+    const wing = meas.wingspan || meas.Wingspan || 60;
+    const depth = meas.depth || meas['Center depth'] || 24;
+    const co = 3;
+    sections.push({title:'Triangle Shawl Pattern', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Foundation:</strong> Ch 4. Row 1: 2 ${abbr} in 4th ch. Turn. (2 sts)</div>
+      <div class="row-block"><strong>Inc Row (RS):</strong> Ch ${turnCh}, 2 ${abbr} in first st, ${abbr} to last st, 2 ${abbr} in last st. Turn. (+2 sts)</div>
+      <div class="row-block"><strong>Repeat Inc Row</strong> until wingspan = <strong>${wing}"</strong> or depth = <strong>${depth}"</strong>. Approx. ${Math.round(depth*rowsPI)} rows total.</div>
+      <div class="row-block"><strong>Edging:</strong> Work 1 row of sc or picot edging around all 3 sides. Block aggressively to open up lace.</div>`});
+
+  } else if (style === 'blanket') {
+    const w = meas.Width || meas.width || 36;
+    const l = meas.Length || meas.length || 48;
+    const co = Math.round(w * stsPI);
+    const rows = Math.round(l * rowsPI);
+    sections.push({title:'Pattern', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Foundation:</strong> Ch ${co + turnCh}. Row 1: ${abbr} across. Turn. (${co} sts)</div>
+      <div class="row-block"><strong>Rows 2–${rows}:</strong> Ch ${turnCh}, ${abbr} across. Turn. (${co} sts)</div>
+      <div class="row-block"><strong>Border:</strong> Join yarn at corner. Work 3 rounds of sc with 3 sc in each corner. Fasten off.</div>
+      <p style="margin-top:0.6rem">Finished size: <strong>${w}" × ${l}"</strong></p>`});
+
+  } else if (style === 'mittens') {
+    const circ  = meas.handCirc  || meas['Hand circumference'] || 7;
+    const hLen  = meas.handLength || meas['Hand length']       || 7.5;
+    const tLen  = meas.thumbLength|| meas['Thumb length']      || 2.5;
+    const sts   = Math.round(circ * stsPI);
+    const rows  = Math.round(hLen * rowsPI);
+    const tSts  = Math.round(circ * 0.3 * stsPI);
+    const tRows = Math.round(tLen * rowsPI);
+    const cuffRows = Math.round(2 * rowsPI);
+    sections.push({title:'Mittens (make 2)', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Cuff:</strong> Magic ring or ch ${sts}, join. Work ${cuffRows} rounds ${abbr}-BLO for ribbing. (${sts} sts)</div>
+      <div class="row-block"><strong>Hand body:</strong> Work even in ${abbr} for ${Math.round(rows * 0.55)} rounds. (${sts} sts)</div>
+      <div class="row-block"><strong>Thumb gusset:</strong> Place marker. Inc 1 st each side of marker every other round ${Math.round(tSts/2)} times. (${sts + tSts} sts)</div>
+      <div class="row-block"><strong>Separate thumb:</strong> Work ${tSts} thumb sts onto waste yarn. Ch 2 over gap. Continue on ${sts} hand sts.</div>
+      <div class="row-block"><strong>Upper hand:</strong> Work even for ${Math.round(rows * 0.35)} rounds.</div>
+      <div class="row-block"><strong>Top shaping:</strong> Dec 4 sts evenly every round until ${Math.max(4, Math.round(sts * 0.2))} sts remain. Pull yarn through, fasten off.</div>
+      <div class="row-block"><strong>Thumb:</strong> Pick up ${tSts + 2} sts around thumb opening. Work ${tRows} rounds ${abbr}. Dec to close. Fasten off.</div>`});
+
+  } else if (style === 'socks') {
+    const circ  = meas.footCirc  || meas['Foot circumference'] || 8;
+    const fLen  = meas.footLength || meas['Foot length']        || 9.5;
+    const lHt   = meas.legHeight  || meas['Leg height']         || 6.5;
+    const sts   = Math.round(circ * stsPI);
+    const legRows  = Math.round(lHt * rowsPI);
+    const footRows = Math.round(fLen * rowsPI);
+    const heelSts  = Math.round(sts / 2);
+    const heelRows = Math.round(heelSts * 0.6);
+    sections.push({title:'Socks (make 2)', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Cuff:</strong> Ch ${sts}, join to work in round. Work ${Math.round(1.5 * rowsPI)} rounds ${abbr}-BLO for ribbing. (${sts} sts)</div>
+      <div class="row-block"><strong>Leg:</strong> Work even in ${abbr} for ${legRows} rounds. (${sts} sts)</div>
+      <div class="row-block"><strong>Heel flap:</strong> Work back and forth on ${heelSts} sts for ${heelRows} rows, sl 1, ${abbr} across.</div>
+      <div class="row-block"><strong>Turn heel:</strong> Work ${Math.round(heelSts * 0.6)} sts, ssk, turn. Sl 1, work ${Math.round(heelSts * 0.2)} sts, dec, turn. Continue until all sts worked. (${Math.round(heelSts * 0.6)} sts)</div>
+      <div class="row-block"><strong>Gusset:</strong> Pick up ${heelRows} sts each side of heel. Work in round, dec 1 each side every other round until ${sts} sts.</div>
+      <div class="row-block"><strong>Foot:</strong> Work even for ${footRows} rounds or until ${Math.round(fLen * 0.75)}" from heel.</div>
+      <div class="row-block"><strong>Toe:</strong> Dec 4 sts every other round until ${Math.round(sts * 0.25)} sts remain. Kitchener stitch or sl st to close.</div>`});
+
+  } else if (style === 'bag') {
+    const w  = meas.width  || meas.Width  || 14;
+    const h  = meas.height || meas.Height || 14;
+    const hd = meas.handleDrop || meas['Handle drop'] || 10;
+    const co = Math.round(w * stsPI);
+    const rows = Math.round(h * rowsPI);
+    sections.push({title:'Tote Bag', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Base:</strong> Ch ${co + 1}. Work ${Math.round(4 * rowsPI)} rows ${abbr}. (${co} sts, base = ${w}" × 4")</div>
+      <div class="row-block"><strong>Sides:</strong> Join to work in the round around base. Work ${rows} rounds ${abbr}. (${co * 2} sts around)</div>
+      <div class="row-block"><strong>Top border:</strong> Work 2 rounds sc. Fasten off.</div>
+      <div class="row-block"><strong>Handles (make 2):</strong> Ch ${Math.round(hd * stsPI * 2)}. Work 3 rows sc. Fold lengthwise and sl st to close. Attach ${Math.round(w * 0.25)}" from each side seam.</div>
+      <p style="margin-top:0.6rem">Finished size: <strong>${w}" wide × ${h}" tall</strong>, handles drop <strong>${hd}"</strong></p>`});
+
+  } else if (style === 'headband') {
+    const circ = meas.headCirc       || meas['Head circumference'] || 21;
+    const wid  = meas.headbandWidth  || meas['Headband width']     || 3;
+    const co   = Math.round(wid * stsPI);
+    const len  = Math.round(circ * 0.9 * rowsPI);
+    sections.push({title:'Headband', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Foundation:</strong> Ch ${co + 1}. Work ${abbr} across. Turn. (${co} sts)</div>
+      <div class="row-block"><strong>Work rows:</strong> Ch ${turnCh}, ${abbr} across, turn — for ${len} rows, until band stretches to ${Math.round(circ * 0.9)}" (it should stretch the remaining 10% to fit).</div>
+      <div class="row-block"><strong>Join ends:</strong> Fold and sl st short ends together, OR twist once and join for an infinity / Möbius style.</div>`});
+
+  } else if (style === 'pillow') {
+    const w = meas.width || meas.Width || 18;
+    const h = meas.height || meas.Height || 18;
+    const co = Math.round(w * stsPI);
+    const rows = Math.round(h * rowsPI);
+    sections.push({title:'Pillow Cover (make 2 panels)', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Foundation:</strong> Ch ${co + 1}. Row 1: ${abbr} across. Turn. (${co} sts)</div>
+      <div class="row-block"><strong>Rows 2–${rows}:</strong> Ch ${turnCh}, ${abbr} across. Turn. Piece = ${w}" × ${h}".</div>
+      <div class="row-block"><strong>Assembly:</strong> Hold both panels WS together. Sc through both layers around 3 sides. Insert pillow form. Sc 4th side closed.</div>`});
+
+  } else if (style === 'dishcloth') {
+    const w = meas.width || meas.Width || 9;
+    const co = Math.round(w * stsPI);
+    const rows = Math.round(w * rowsPI);
+    sections.push({title:'Dishcloth', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Foundation:</strong> Ch ${co + 1}. Row 1: ${abbr} across. Turn. (${co} sts)</div>
+      <div class="row-block"><strong>Rows 2–${rows}:</strong> Ch ${turnCh}, ${abbr} across. Turn. (${w}" × ${w}" square)</div>
+      <div class="row-block"><strong>Border:</strong> Work 1 round sc around all 4 edges, 3 sc in each corner.</div>
+      <div class="row-block"><strong>Hanging loop (optional):</strong> At one corner, ch 10, sl st to same corner. Fasten off.</div>`});
+
+  } else if (style === 'basket') {
+    const d = meas.diameter || meas.Diameter || 9;
+    const h = meas.height   || meas.Height   || 6;
+    const baseSts = Math.round(d * stsPI * 0.85);
+    const sideRows = Math.round(h * rowsPI);
+    sections.push({title:'Storage Basket', full:true, html:`
+      ${mosaicRow}
+      <div class="row-block"><strong>Base:</strong> Magic ring, 6 ${abbr} into ring. Inc +6 sts/rnd until ${baseSts} sts (≈ ${d}" diameter). Sl st, do not turn.</div>
+      <div class="row-block"><strong>Sides:</strong> Work ${abbr} in BLO for first round (creates a sharp base corner). Continue in ${abbr} for ${sideRows} rounds straight. (${baseSts} sts)</div>
+      <div class="row-block"><strong>Rim:</strong> Work 2 rounds sc or crab stitch for a firm, neat top edge. Fasten off.</div>
+      <p style="margin-top:0.6rem">Finished size: approx. <strong>${d}" diameter × ${h}" tall</strong></p>`});
+
+  } else {
+    // generic fallback
+    sections.push({title:'Pattern Instructions', full:true, html:`
+      <div class="row-block"><strong>Foundation:</strong> Ch to desired width (${Math.round(stsPI * 4)} sts = 4"). Work in ${st.name} for desired length.</div>
+      <div class="row-block"><strong>Each Row:</strong> Ch ${turnCh}, ${abbr} across. Turn.</div>
+      <p style="margin-top:0.6rem">Measurements are pre-filled above — edit any value to customise.</p>`});
+  }
+  return sections;
+}
+
+function estimateYardage(style, yarn, size, meas) {
+  const mult = {fingering:2.2,sport:1.8,dk:1.4,worsted:1,bulky:0.75,'super-bulky':0.55,jumbo:0.4};
+  const m = mult[yarn]||1;
+  const base = {sweater:900,cardigan:1000,vest:600,top:400,dress:1100,skirt:700,beanie:150,scarf:300,shawl:600,mittens:200,socks:400,bag:300,headband:80,blanket:1400,dishcloth:80,pillow:500,basket:400,'amigurumi-bear':250,'amigurumi-bunny':200,'amigurumi-cat':200,'amigurumi-elephant':250,'amigurumi-dragon':300,'amigurumi-doll':250};
+  return Math.round((base[style]||500) * m);
+}
+
+// ===== AMIGURUMI =====
+const amiData = {
+  bear:{name:'Build-a-Bear Teddy',parts:['Head','Body','Arms (×2)','Legs (×2)','Ears (×2)','Muzzle','Bow / Accessory'],emoji:'🐻'},
+  bunny:{name:'Floppy Bunny',parts:['Head','Body','Arms (×2)','Legs (×2)','Ears (×2 — long)','Tail (pompom)'],emoji:'🐰'},
+  cat:{name:'Sleepy Cat',parts:['Head','Body','Arms (×2)','Legs (×2)','Ears (×2 — triangular)','Tail'],emoji:'🐱'},
+  elephant:{name:'Baby Elephant',parts:['Head','Trunk (extended)','Body','Legs (×4)','Ears (×2 — large)','Tail'],emoji:'🐘'},
+  dinosaur:{name:'T-Rex Dinosaur',parts:['Head','Body','Tiny Arms (×2)','Legs (×2)','Tail','Spines (×6)'],emoji:'🦖'},
+  dragon:{name:'Fantasy Dragon',parts:['Head','Body','Wings (×2)','Front Legs (×2)','Back Legs (×2)','Tail','Spines','Horns (×2)'],emoji:'🐲'},
+  doll:{name:'Rag Doll',parts:['Head (with hair)','Body','Arms (×2)','Legs (×2)','Dress / Outfit','Shoes (×2)'],emoji:'🪆'},
+  fox:{name:'Little Fox',parts:['Head','Body','Arms (×2)','Legs (×2)','Tail (large bushy)','Ears (×2)'],emoji:'🦊'},
+  penguin:{name:'Penguin',parts:['Head','Body','Wings (×2)','Feet (×2)','Beak','Belly patch'],emoji:'🐧'},
+  octopus:{name:'Octopus',parts:['Head / Body (combined)','Tentacles (×8)','Eyes'],emoji:'🐙'},
+};
+
+const amiSizeData = {mini:{head:14,body:18,bodyRows:10},small:{head:20,body:24,bodyRows:14},medium:{head:30,body:36,bodyRows:20},large:{head:42,body:48,bodyRows:26},giant:{head:60,body:72,bodyRows:38}};
+
+function generateAmigurumi() {
+  const style = document.getElementById('amiStyle').value;
+  const sz = document.getElementById('amiSize').value;
+  const yarn = document.getElementById('amiYarn').value;
+  const c1 = document.getElementById('amiColor1').value || 'Caramel Brown';
+  const c2 = document.getElementById('amiColor2').value || 'Cream';
+  const data = amiData[style];
+  const sData = amiSizeData[sz];
+  const stsPI = getGauge(yarn, 'sc') / 4;
+
+  document.getElementById('amiTitle').textContent = `${data.emoji} ${data.name}`;
+  document.getElementById('amiMeta').innerHTML = `
+    <span class="badge badge-gold">🧶 ${yarn}</span>
+    <span class="badge badge-teal">${sz} size</span>
+    <span class="badge badge-violet">sc (amigurumi standard)</span>
+    <span class="badge badge-sage">Magic Ring Method</span>
+  `;
+
+  document.getElementById('amiBody').innerHTML = buildAmiBody(style, sz, yarn, c1, c2, data, sData, stsPI);
+  document.getElementById('amiOutputWrap').classList.add('visible');
+  document.getElementById('amiOutputWrap').scrollIntoView({behavior:'smooth',block:'start'});
+
+  const imgPrompt = `an adorable handmade crochet amigurumi ${data.name} in ${c1} and ${c2}, cute Japanese amigurumi style, soft toy, professional photography, white background`;
+  generateImage(imgPrompt, 'amiImgWrap', 'amiImgText');
+}
+
+function buildAmiBody(style, sz, yarn, c1, c2, data, sData, stsPI) {
+  const yd = {mini:80,small:130,medium:250,large:400,giant:700};
+  const fills = {mini:'a handful of',small:'a small bag of',medium:'150g of',large:'250g of',giant:'400g+ of'};
+  const eyeSizes = {mini:'6mm',small:'9mm',medium:'12mm',large:'15mm',giant:'18mm'};
+
+  const headRnds = sData.head;
+  const bodyRnds = sData.body;
+  const maxSts = Math.round(sData.head * 0.7);
+
+  const partsHtml = data.parts.map((p,i) => `
+    <div class="row-block"><strong>${p}:</strong> ${getAmiPartInstr(p, sData, c1, c2, i)}</div>
+  `).join('');
+
+  return `<div class="pattern-grid">
+    <div class="psection">
+      <h3>Materials</h3>
+      <ul>
+        <li>${yd[sz]} yards ${yarn} yarn — Color A: ${c1}</li>
+        <li>Small amount Color B: ${c2} (muzzle, belly, accents)</li>
+        <li>3.5mm hook (or appropriate for tight ami gauge)</li>
+        <li>${fills[sz]} polyfill stuffing</li>
+        <li>${eyeSizes[sz]} safety eyes × 2</li>
+        <li>Black embroidery thread (nose, mouth)</li>
+        <li>Yarn needle, stitch marker</li>
+      </ul>
+    </div>
+    <div class="psection">
+      <h3>Gauge & Notes</h3>
+      <p><strong>Use tight gauge!</strong> Stuffing should not show through sts. Work in continuous rounds with a stitch marker; do not join or turn unless noted.</p>
+      <p style="margin-top:0.5rem"><strong>Gauge:</strong> 18–20 sc × 20 rounds = 4" × 4" (adjust hook down for tighter fabric)</p>
+      <p style="margin-top:0.5rem"><strong>Magic Ring:</strong> All pieces begin with a magic ring (adjustable loop). Pull tight after round 1.</p>
+    </div>
+    <div class="psection full-span">
+      <h3>Abbreviations</h3>
+      <div class="abbrev-box">MR=magic ring | sc=single crochet | inc=2 sc in 1 st | dec=invisible decrease (insert through FL of next 2 sts) | BLO=back loop only | sl st=slip stitch | ch=chain | FO=fasten off leaving long tail for sewing | (sts)=stitch count at end of round</div>
+    </div>
+    <div class="psection full-span">
+      <h3>Head (Color A: ${c1})</h3>
+      <div class="row-block"><strong>Rnd 1:</strong> MR, 6 sc into ring. (6)</div>
+      <div class="row-block"><strong>Rnd 2:</strong> Inc in each st. (12)</div>
+      <div class="row-block"><strong>Rnd 3:</strong> *sc, inc* rep. (18)</div>
+      <div class="row-block"><strong>Rnd 4:</strong> *2sc, inc* rep. (24)</div>
+      <div class="row-block"><strong>Rnd 5:</strong> *3sc, inc* rep. (30)</div>
+      ${maxSts > 36 ? `<div class="row-block"><strong>Rnd 6:</strong> *4sc, inc* rep. (36)</div>` : ''}
+      ${maxSts > 42 ? `<div class="row-block"><strong>Rnd 7:</strong> *5sc, inc* rep. (42)</div>` : ''}
+      <div class="row-block"><strong>Rnds even:</strong> Work even for ${Math.round(sData.head * 0.2)} rounds (${maxSts} sts).</div>
+      <div class="row-block"><strong>Attach eyes</strong> between rnds ${Math.round(maxSts*0.25)}–${Math.round(maxSts*0.3)} (about ${Math.round(maxSts*0.18)} sts apart). Embroider nose and smile.</div>
+      <div class="row-block"><strong>Dec Rnds:</strong> *sc, dec* rep each rnd until 6 sts remain. Stuff firmly. Close and FO.</div>
+    </div>
+    <div class="psection full-span">
+      <h3>Body (Color A: ${c1})</h3>
+      <div class="row-block"><strong>Rnd 1–5:</strong> Same inc pattern as Head until ${Math.round(maxSts*0.85)} sts.</div>
+      <div class="row-block"><strong>Rnds even:</strong> Work even for ${Math.round(sData.bodyRows * 0.5)} rounds.</div>
+      <div class="row-block"><strong>Dec for belly:</strong> *4sc, dec* rep for ${Math.round(sData.bodyRows * 0.3)} rounds. Stuff 3/4 full.</div>
+      <div class="row-block"><strong>Close:</strong> Continue dec until 6 sts remain. FO with long tail for attaching head.</div>
+    </div>
+    <div class="psection full-span">
+      <h3>All Parts</h3>
+      ${partsHtml}
+    </div>
+    <div class="psection full-span">
+      <h3>Assembly</h3>
+      <ol>
+        <li>Pin all parts to body before sewing — check symmetry from all angles.</li>
+        <li>Sew head to body with long tail, weaving through sts for security. Pull tight.</li>
+        <li>Stuff arms and legs lightly (or leave unstuffed for floppy limbs).</li>
+        <li>Sew arms at shoulder level, legs at base of body.</li>
+        <li>Sew ears to top of head; sew muzzle/face details last.</li>
+        <li>Add bow, outfit, or accessories as desired.</li>
+        <li>Weave in all ends. Your ${data.name} is ready to hug! ${data.emoji}</li>
+      </ol>
+    </div>
+  </div>`;
+}
+
+function getAmiPartInstr(part, sData, c1, c2, i) {
+  const maxSts = Math.round(sData.head * 0.45);
+  const generic = {
+    'Arms (×2)': `MR, 6sc, inc each rnd to 12 sts. Work even ${Math.round(sData.bodyRows*0.4)} rnds. Dec to close. Stuff lightly or leave flat.`,
+    'Legs (×2)': `MR, 6sc, inc to 14 sts. Work even ${Math.round(sData.bodyRows*0.5)} rnds. Dec to 6 and close. Stuff firmly.`,
+    'Ears (×2)': `MR, 6sc, inc to 10 sts. Work 2 rnds even. Sl st to join. Flatten and sew to head.`,
+    'Ears (×2 — long)': `Ch 6. Sc across, inc at tip. Work in rows, narrowing to point. Fold base and sew.`,
+    'Ears (×2 — triangular)': `Ch 5. Dec at tip each row until 3 sts. Fold and sew upright to head.`,
+    'Ears (×2 — large)': `MR, 6sc, inc every rnd to 24 sts. Work 3 even rnds. Sew curved edge to side of head.`,
+    'Muzzle': `(${c2}) MR, 6sc, inc to 12 sts. Work 2 rnds. Sew to face; embroider nose with black thread.`,
+    'Tail': `MR, 6sc, inc to 10 sts, work 6 rnds, dec and close. Attach at back base.`,
+    'Tail (pompom)': `Wrap yarn 40× around 2 fingers. Tie center, trim to fluffy ball. Sew to back.`,
+    'Tail (large bushy)': `MR, 6sc, inc to 18 sts. Work 12 rnds, dec to 6, close. Brush with stiff brush for fluffy effect.`,
+    'Bow / Accessory': `(${c2}) Ch 15, sl st in a loop. Wrap yarn around center. Sew to neck or ear.`,
+    'Belly patch': `(${c2}) Ch 5, oval base pattern: sc around both sides of ch for 8 sts. Inc each rnd to 16 sts. Sew flat to front of body.`,
+    'Beak': `(Yellow) MR, 6sc, inc to 9, work 2 even rnds. Sew to face center.`,
+    'Spines': `Ch 6, sc back across. Make 6 and sew along back in a row.`,
+    'Horns (×2)': `MR, 4sc, inc to 6, work 4 rnds. Close and sew to top of head.`,
+    'Wings (×2)': `Ch 12. Dc fan along ch for decorative wing shape. Sew to back.`,
+    'Tentacles (×8)': `Ch 20, sc back across. Make 8, attach under body base evenly.`,
+    'Front Legs (×2)': `MR, 6sc inc to 10 sts. Work 6 rnds. Close and sew to front lower body.`,
+    'Back Legs (×2)': `MR, 6sc inc to 12 sts. Work 8 rnds. Stuff slightly. Sew to rear lower body.`,
+    'Eyes': `If using yarn eyes: MR, 6sc, sl st. If using safety eyes, attach directly to head before closing.`,
+    'Head (with hair)': `Work head as above. Cut 30 strands of yarn for hair. Attach with lark's head knots along crown row.`,
+    'Dress / Outfit': `Join yarn at neck. Ch 2, hdc around body in the round, inc +4 sts/rnd for 6 rnds to flare. Add lace trim.`,
+    'Shoes (×2)': `MR, 6sc, inc to 12. Work 3 rnds. Dec sides to form shoe shape. Close.`,
+  };
+  return generic[part] || `Work in sc in the round, starting with MR 6sc. Inc to ${maxSts} sts, work ${Math.round(sData.bodyRows*0.3)} rnds, dec to close. Stuff as desired. Fasten off leaving tail for sewing.`;
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const panel = document.getElementById('tab-'+id);
+  if (panel) panel.classList.add('active');
+  if (id === 'projects') renderProjectsTab();
+}
+
+// ==================== PROJECTS SYSTEM ====================
+let currentPatternData = null; // holds last generated pattern for saving
+
+function captureCurrentProject() {
+  const style = document.getElementById('style')?.value;
+  const yarn  = document.getElementById('yarnWeight')?.value;
+  const hook  = document.getElementById('hookSize')?.value;
+  const size  = document.getElementById('size')?.value;
+  const skill = document.getElementById('skillLevel')?.value;
+  const color1 = document.getElementById('color1')?.value || '';
+  const color2 = document.getElementById('color2')?.value || '';
+  const title = document.getElementById('outputTitle')?.textContent || style;
+  const bodyHTML = document.getElementById('outputBody')?.innerHTML || '';
+  const metaHTML = document.getElementById('outputMeta')?.innerHTML || '';
+  const imgSVG  = document.getElementById('imgWrap')?.innerHTML || '';
+  const isMulti = composerMode === 'multi';
+  const st = isMulti ? (zoneAssignments[0] ? stObj(zoneAssignments[0].stitchId) : stObj(selectedStitch)) : stObj(selectedStitch);
+
+  return {
+    title, style, yarn, hook, size, skill, color1, color2,
+    stitchId: selectedStitch, stitchName: st?.name || '',
+    isMulti, zones: isMulti ? JSON.parse(JSON.stringify(zoneAssignments)) : [],
+    bodyHTML, metaHTML, imgSVG,
+    savedAt: new Date().toISOString()
+  };
+}
+
+async function saveProject() {
+  const nameInput = document.getElementById('projectNameInput');
+  const rawName = nameInput?.value?.trim();
+  const data = captureCurrentProject();
+
+  if (!data.bodyHTML) {
+    showToast('⚠ Generate a pattern first!', '#d04060');
+    return;
+  }
+
+  const name = rawName || data.title || 'My Project';
+  data.name = name;
+  const key = 'project:' + Date.now();
+
+  try {
+    await window.storage.set(key, JSON.stringify(data));
+    showToast('✓ "' + name + '" saved!');
+    if (nameInput) nameInput.value = '';
+    await renderProjectsTab();
+    updateProjectsCount();
+  } catch(e) {
+    showToast('⚠ Could not save — storage error', '#d04060');
+    console.error('Save error:', e);
+  }
+}
+
+async function loadAllProjects() {
+  try {
+    const result = await window.storage.list('project:');
+    if (!result || !result.keys) return [];
+    const projects = [];
+    for (const key of result.keys) {
+      try {
+        const item = await window.storage.get(key);
+        if (item?.value) {
+          const p = JSON.parse(item.value);
+          p._key = key;
+          projects.push(p);
+        }
+      } catch(e) {}
+    }
+    // Sort newest first
+    return projects.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+  } catch(e) { return []; }
+}
+
+async function deleteProject(key, cardEl) {
+  if (!confirm('Delete this project?')) return;
+  try {
+    await window.storage.delete(key);
+    cardEl.style.opacity = '0';
+    cardEl.style.transform = 'scale(0.9)';
+    setTimeout(() => { cardEl.remove(); checkEmptyProjects(); updateProjectsCount(); }, 250);
+  } catch(e) { showToast('Could not delete', '#d04060'); }
+}
+
+function checkEmptyProjects() {
+  const grid = document.getElementById('projectsGrid');
+  const cards = grid?.querySelectorAll('.project-card');
+  const empty = document.getElementById('projectsEmpty');
+  if (empty) empty.style.display = (!cards || cards.length === 0) ? 'block' : 'none';
+}
+
+async function updateProjectsCount() {
+  const projects = await loadAllProjects();
+  const badge = document.getElementById('projectsCount');
+  if (badge) {
+    badge.textContent = projects.length;
+    badge.style.display = projects.length > 0 ? 'inline' : 'none';
+  }
+}
+
+function loadProjectIntoGenerator(p) {
+  // Switch to generator tab
+  const genBtn = document.querySelector('.tab-btn');
+  switchTab('generator', genBtn);
+
+  // Restore form fields
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  set('style', p.style);
+  set('yarnWeight', p.yarn);
+  set('hookSize', p.hook);
+  set('size', p.size);
+  set('skillLevel', p.skill);
+  set('color1', p.color1);
+  set('color2', p.color2);
+  updateMeasurements();
+
+  // Restore stitch
+  if (!p.isMulti && p.stitchId) {
+    selectedStitch = p.stitchId;
+    renderStitchGrid();
+    showStitchPreview(p.stitchId);
+  }
+
+  // Restore multi-zones
+  if (p.isMulti && p.zones?.length) {
+    composerMode = 'multi';
+    zoneAssignments = p.zones;
+    document.getElementById('singleMode').style.display = 'none';
+    document.getElementById('multiMode').style.display = 'block';
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('modeBtnMulti')?.classList.add('active');
+    renderZoneDiagram();
+    renderZonesList();
+    renderCompositionPreview();
+  }
+
+  // Restore output
+  document.getElementById('outputTitle').textContent = p.title || p.name;
+  document.getElementById('outputMeta').innerHTML = p.metaHTML || '';
+  document.getElementById('outputBody').innerHTML = p.bodyHTML || '';
+  document.getElementById('imgWrap').innerHTML = p.imgSVG || '<div class="img-placeholder">🧶<span>Saved preview</span></div>';
+  const svg = document.getElementById('imgWrap').querySelector('svg');
+  if (svg) svg.style.cssText = 'width:100%;height:100%;display:block;';
+  document.getElementById('imgLoadingText').textContent = '✦ Saved preview';
+  document.getElementById('outputWrap').classList.add('visible');
+  document.getElementById('projectNameInput').value = p.name || '';
+
+  showToast('✓ "' + (p.name || p.title) + '" loaded');
+  document.getElementById('outputWrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+async function renderProjectsTab() {
+  const grid = document.getElementById('projectsGrid');
+  const empty = document.getElementById('projectsEmpty');
+  if (!grid) return;
+
+  const projects = await loadAllProjects();
+
+  if (projects.length === 0) {
+    if (empty) empty.style.display = 'block';
+    // Remove any existing cards
+    grid.querySelectorAll('.project-card').forEach(c => c.remove());
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  grid.querySelectorAll('.project-card').forEach(c => c.remove());
+
+  projects.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.style.transition = 'all 0.2s, opacity 0.25s, transform 0.25s';
+
+    const date = p.savedAt ? new Date(p.savedAt).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
+    const stLabel = p.isMulti ? `${p.zones?.length || 0} zones` : (p.stitchName || '');
+    const imgContent = p.imgSVG && p.imgSVG.includes('<svg')
+      ? p.imgSVG
+      : '<div class="no-img">🧶</div>';
+
+    card.innerHTML = `
+      <div class="project-card-img">${imgContent}</div>
+      <div class="project-card-body">
+        <div class="project-card-name">${p.name || p.title}</div>
+        <div class="project-card-style">${p.title || ''} · Size ${p.size || ''}</div>
+        <div class="project-card-tags">
+          ${p.yarn ? `<span class="project-card-tag">🧶 ${p.yarn}</span>` : ''}
+          ${p.hook ? `<span class="project-card-tag">🪝 ${p.hook}</span>` : ''}
+          ${stLabel ? `<span class="project-card-tag">${stLabel}</span>` : ''}
+          ${p.color1 ? `<span class="project-card-tag" style="background:rgba(0,0,0,0.15);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:${p.color1};display:inline-block"></span>${p.color1}</span>` : ''}
+        </div>
+        <div class="project-card-date">Saved ${date}</div>
+        <div class="project-card-actions">
+          <button class="project-action-btn" onclick="loadProjectIntoGenerator(${JSON.stringify(p).replace(/"/g,'&quot;')})">📂 Load</button>
+          <button class="project-action-btn" onclick="duplicateProject('${p._key}')">⧉ Duplicate</button>
+          <button class="project-action-btn danger" onclick="deleteProject('${p._key}', this.closest('.project-card'))">✕ Delete</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+async function duplicateProject(key) {
+  try {
+    const item = await window.storage.get(key);
+    if (!item?.value) return;
+    const p = JSON.parse(item.value);
+    p.name = (p.name || p.title) + ' (copy)';
+    p.savedAt = new Date().toISOString();
+    await window.storage.set('project:' + Date.now(), JSON.stringify(p));
+    showToast('✓ Duplicated!');
+    await renderProjectsTab();
+    updateProjectsCount();
+  } catch(e) { showToast('Could not duplicate', '#d04060'); }
+}
+
+function showToast(msg, bg) {
+  let toast = document.getElementById('saveToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'saveToast';
+    toast.className = 'save-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.background = bg || 'var(--violet)';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// ==================== INIT ====================
+// init
+renderStitchGrid();
+renderLib();
+showStitchPreview('dc');
+updateMeasurements();
+updateProjectsCount();
+</script>
+</body>
+</html>
