@@ -21,7 +21,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
-body{height:100vh;height:100dvh;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;}
+body{height:100vh;height:100dvh;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;display:flex;flex-direction:column;overflow:hidden;}
 #who-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;}
 .who-card{background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:320px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.7);}
 .who-card h2{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:6px;}
@@ -540,7 +540,9 @@ function buildSnapshot(){
     ptaxHistory:JSON.parse(JSON.stringify(ptaxHistory)),
     nextMonthFlags:[...nextMonthFlags],
     NM_OVR:JSON.parse(JSON.stringify(NM_OVR)),
+    nextMonthFlaggedForYear,nextMonthFlaggedForMonth,
     savingsGoals:JSON.parse(JSON.stringify(savingsGoals))};
+}
 }
 function applySnapshot(d,meta){
   if(!d)return;
@@ -551,6 +553,10 @@ function applySnapshot(d,meta){
   if(d.ptaxHistory)ptaxHistory=d.ptaxHistory;
   if(d.nextMonthFlags)nextMonthFlags=new Set(d.nextMonthFlags);
   if(d.NM_OVR)NM_OVR=d.NM_OVR;
+  if(d.nextMonthFlaggedForYear!==undefined)nextMonthFlaggedForYear=d.nextMonthFlaggedForYear;
+  if(d.nextMonthFlaggedForMonth!==undefined)nextMonthFlaggedForMonth=d.nextMonthFlaggedForMonth;
+  // Check if flagged bills need to be auto-applied (month has arrived)
+  applyFlagRolloverIfNeeded();
   if(d.savingsGoals){savingsGoals=d.savingsGoals;sgid=Math.max(sgid,...savingsGoals.map(g=>parseInt(g.id.replace('sg',''))||0),sgid);}
   renderAll();renderSavings();
   if(meta&&meta.who&&meta.who!==currentUser)showToast(meta.who,meta.desc||'updated the app',meta.ts);
@@ -608,7 +614,7 @@ function chooseUser(who){
   document.getElementById('user-avatar').textContent=who==='joe'?'💪':'💜';
   document.getElementById('user-name').textContent=who==='joe'?'Joe':'Beth';
   document.getElementById('user-name').style.color=who==='joe'?'var(--joe)':'var(--beth)';
-  initFirebase();renderAll();renderSavings();
+  initFirebase();applyFlagRolloverIfNeeded();renderAll();renderSavings();
 }
 
 /* ── TABS ── */
@@ -698,6 +704,34 @@ function syncPayViews(){
   setMoney('ov-beth-val',income.beth.monthly);document.getElementById('ov-beth-sub').textContent=income.beth.schedule;
 }
 
+/* ── NEXT-MONTH FLAG ROLLOVER ── */
+// Store which month the flags were created for so we know when to apply them
+let nextMonthFlaggedForYear=null,nextMonthFlaggedForMonth=null;
+
+function applyFlagRolloverIfNeeded(){
+  // If flags exist and were meant for a month that is now current or past, apply them
+  if(nextMonthFlags.size===0)return;
+  const today=new Date();
+  const ty=today.getFullYear(),tm=today.getMonth();
+  // Determine what month the flags are targeting (next month relative to when they were set)
+  // We store the target month; if not stored, infer from current context
+  const targY=nextMonthFlaggedForYear!==null?nextMonthFlaggedForYear:ty;
+  const targM=nextMonthFlaggedForMonth!==null?nextMonthFlaggedForMonth:tm;
+  // If today is at or past the target month, apply the overrides and clear flags
+  if(ty>targY||(ty===targY&&tm>=targM)){
+    const k=mkey(targY,targM);
+    if(!OVR[k])OVR[k]={};
+    nextMonthFlags.forEach(id=>{
+      if(NM_OVR[id]!==undefined)OVR[k][id]=NM_OVR[id];
+    });
+    nextMonthFlags.clear();
+    NM_OVR={};
+    nextMonthFlaggedForYear=null;
+    nextMonthFlaggedForMonth=null;
+    pushToFirebase('auto-applied next-month flags for '+MONTHS[targM]+' '+targY);
+  }
+}
+
 /* ── NEXT MONTH FLAGS ── */
 function toggleNextMonth(id){
   const b=getAllBills().find(x=>x.id===id);
@@ -705,9 +739,16 @@ function toggleNextMonth(id){
     // Unflag: discard next-month amount, current month untouched
     nextMonthFlags.delete(id);
     delete NM_OVR[id];
+    if(nextMonthFlags.size===0){nextMonthFlaggedForYear=null;nextMonthFlaggedForMonth=null;}
     pushToFirebase('un-flagged '+(b?b.name:id)+' from next month');
   } else {
     // Flag: seed next-month amount from current month amount
+    // Record the target month (next month from current view) when first flag is set
+    if(nextMonthFlags.size===0){
+      const nm=new Date(vy,vm+1,1);
+      nextMonthFlaggedForYear=nm.getFullYear();
+      nextMonthFlaggedForMonth=nm.getMonth();
+    }
     nextMonthFlags.add(id);
     const bills=getBills(vy,vm);
     const cur=bills.find(x=>x.id===id);
@@ -1242,77 +1283,32 @@ function renderSavings(){
 
 /* ── PWA ── */
 (function(){
-  // Draw icon to canvas and export as PNG (required by Android Chrome for PWA install)
+  function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
   function makePng(size,cb){
-    const c=document.createElement('canvas');
-    c.width=c.height=size;
-    const ctx=c.getContext('2d');
-    // Background
-    ctx.fillStyle='#12151f';
-    roundRect(ctx,0,0,size,size,size*0.2);
-    ctx.fill();
-    // House shape
-    const s=size/192;
-    ctx.strokeStyle='#e8b86d';ctx.lineWidth=3*s;ctx.fillStyle='#1d2135';
-    ctx.beginPath();
-    ctx.moveTo(96*s,28*s);ctx.lineTo(164*s,92*s);ctx.lineTo(154*s,92*s);
-    ctx.lineTo(154*s,164*s);ctx.lineTo(114*s,164*s);ctx.lineTo(114*s,116*s);
-    ctx.lineTo(78*s,116*s);ctx.lineTo(78*s,164*s);ctx.lineTo(38*s,164*s);
-    ctx.lineTo(38*s,92*s);ctx.lineTo(28*s,92*s);ctx.closePath();
-    ctx.fill();ctx.stroke();
-    // Door
-    ctx.fillStyle='#232740';
-    roundRect(ctx,78*s,116*s,36*s,48*s,4*s);ctx.fill();
-    // Windows
-    ctx.fillStyle='rgba(232,109,109,0.5)';
-    roundRect(ctx,44*s,102*s,30*s,26*s,3*s);ctx.fill();
-    ctx.fillStyle='rgba(184,125,232,0.5)';
-    roundRect(ctx,118*s,102*s,30*s,26*s,3*s);ctx.fill();
-    // Dollar badge
+    const c=document.createElement('canvas');c.width=c.height=size;
+    const ctx=c.getContext('2d'),s=size/192;
+    ctx.fillStyle='#12151f';roundRect(ctx,0,0,size,size,size*0.2);ctx.fill();
+    ctx.fillStyle='#1d2135';ctx.strokeStyle='#e8b86d';ctx.lineWidth=3*s;
+    ctx.beginPath();ctx.moveTo(96*s,28*s);ctx.lineTo(164*s,92*s);ctx.lineTo(154*s,92*s);ctx.lineTo(154*s,164*s);ctx.lineTo(114*s,164*s);ctx.lineTo(114*s,116*s);ctx.lineTo(78*s,116*s);ctx.lineTo(78*s,164*s);ctx.lineTo(38*s,164*s);ctx.lineTo(38*s,92*s);ctx.lineTo(28*s,92*s);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle='#232740';roundRect(ctx,78*s,116*s,36*s,48*s,4*s);ctx.fill();
+    ctx.fillStyle='rgba(232,109,109,0.5)';roundRect(ctx,44*s,102*s,30*s,26*s,3*s);ctx.fill();
+    ctx.fillStyle='rgba(184,125,232,0.5)';roundRect(ctx,118*s,102*s,30*s,26*s,3*s);ctx.fill();
     ctx.fillStyle='#0c0f18';ctx.strokeStyle='#e8b86d';ctx.lineWidth=2*s;
     ctx.beginPath();ctx.arc(148*s,52*s,18*s,0,Math.PI*2);ctx.fill();ctx.stroke();
-    ctx.fillStyle='#e8b86d';ctx.font=`bold ${14*s}px sans-serif`;
-    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#e8b86d';ctx.font=`bold ${14*s}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText('$',148*s,53*s);
     cb(c.toDataURL('image/png'));
-  }
-  function roundRect(ctx,x,y,w,h,r){
-    ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
-    ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);
-    ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);
-    ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);
-    ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
   }
   makePng(192,function(png192){
     document.getElementById('ati').href=png192;
     makePng(512,function(png512){
-      const m={
-        name:'Joe & Beth - House Budget',
-        short_name:'House Budget',
-        start_url:location.href,
-        display:'standalone',
-        background_color:'#0c0f18',
-        theme_color:'#0c0f18',
-        orientation:'portrait',
-        icons:[
-          {src:png192,sizes:'192x192',type:'image/png',purpose:'any maskable'},
-          {src:png512,sizes:'512x512',type:'image/png',purpose:'any maskable'}
-        ]
-      };
-      const blob=new Blob([JSON.stringify(m)],{type:'application/manifest+json'});
-      document.getElementById('mfst').href=URL.createObjectURL(blob);
+      const m={name:'Joe & Beth - House Budget',short_name:'House Budget',start_url:location.href,display:'standalone',background_color:'#0c0f18',theme_color:'#0c0f18',orientation:'portrait',icons:[{src:png192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:png512,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
+      document.getElementById('mfst').href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));
     });
   });
-  // Service worker for offline support (required for installability)
   if('serviceWorker' in navigator){
-    const swCode=`
-      self.addEventListener('install',e=>self.skipWaiting());
-      self.addEventListener('activate',e=>self.clients.claim());
-      self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('Offline'))));
-    `;
-    const swBlob=new Blob([swCode],{type:'application/javascript'});
-    const swUrl=URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl,{scope:'./'}).catch(()=>{});
+    const sw=`self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>self.clients.claim());self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response('Offline'))));`;
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'})),{scope:'./'}).catch(()=>{});
   }
 })();
 
