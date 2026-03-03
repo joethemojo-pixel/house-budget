@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" id="ati" href="">
 <link rel="manifest" id="mfst" href="">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" onerror="window._chartJsFailed=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
   --bg:#0c0f18;--surf:#12151f;--surf2:#181c2a;--surf3:#1d2135;
@@ -543,7 +543,6 @@ function buildSnapshot(){
     nextMonthFlaggedForYear,nextMonthFlaggedForMonth,
     savingsGoals:JSON.parse(JSON.stringify(savingsGoals))};
 }
-}
 function applySnapshot(d,meta){
   if(!d)return;
   if(d.income)income=d.income;
@@ -630,8 +629,8 @@ function switchTab(tab){
   document.getElementById('ov-chip').style.display=tab==='budget'?'':'none';
   document.getElementById('tab-budget').classList.toggle('active-tab',tab==='budget');
   document.getElementById('tab-savings').classList.toggle('active-tab',tab==='savings');
-  if(tab==='savings')try{renderSavings();}catch(e){}
-  if(tab==='budget'){requestAnimationFrame(()=>requestAnimationFrame(()=>{try{renderCharts();}catch(e){}}));try{sizeCal();}catch(e){}}
+  if(tab==='savings')renderSavings();
+  if(tab==='budget'){requestAnimationFrame(()=>requestAnimationFrame(renderCharts));sizeCal();}
 }
 
 /* ── PRIVACY ── */
@@ -1070,7 +1069,6 @@ function buildCashFlow(y,m){
 }
 function renderCharts(){
   if(currentTab!=='budget')return;
-  if(typeof Chart==='undefined')return;
   const ss=document.querySelector('.section-split'),ph=ss?ss.querySelector('.ph'):null;
   const ssH=ss?ss.clientHeight:400,phH=ph?ph.offsetHeight:38;
   const wrapH=Math.max(140,ssH-phH-22-16-8);
@@ -1332,9 +1330,9 @@ function renderSavings(){
 })();
 
 /* ── INIT ── */
-try{buildIconPicker('icon-picker',ALL_ICONS,'🛒',v=>{selIcon=v;});}catch(e){}
-try{buildIconPicker('sav-icon-picker',SAV_ICONS,'🏠',v=>{selSavIcon=v;});}catch(e){}
-try{switchTab('budget');}catch(e){console.error('switchTab init error:',e);}
+buildIconPicker('icon-picker',ALL_ICONS,'🛒',v=>{selIcon=v;});
+buildIconPicker('sav-icon-picker',SAV_ICONS,'🏠',v=>{selSavIcon=v;});
+switchTab('budget');
 </script>
 </body>
 </html>
