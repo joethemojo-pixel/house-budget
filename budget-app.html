@@ -496,17 +496,25 @@ const DAYS_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 let currentUser=null,fbReady=false,suppressUntil=0,currentTab='budget';
 
 let income={
-  joe:  {monthly:2300,perDeposit:1150,schedule:'Every other Friday'},
+  joe:  {monthly:2300,perDeposit:1200,schedule:'Every other Friday'},
   beth: {monthly:3180,perDeposit:1590,schedule:'15th & 30th of month'},
 };
 let vy=new Date().getFullYear(),vm=new Date().getMonth();
-let ptaxBalance=5855.00;
-const PTAX_ORIGINAL=5855.00;
-let ptaxHistory=[],ptaxEditOpen=false;
+let ptaxBalance=5505.00;
+const PTAX_ORIGINAL=5505.00;
+let ptaxHistory=[
+  {amt:200,date:'Mar 13, 2026'},
+  {amt:150,date:'Feb 27, 2026'},
+],ptaxEditOpen=false;
 let nextMonthFlags=new Set();
 let NM_OVR={};        // next-month amount overrides: {billId: amount}
 let previewNextMonth=false; // are we viewing next month preview?
-let savingsGoals=[],sgid=2000;
+let savingsGoals=[
+  {cat:'Tech',  icon:'💻', id:'sg2000',name:'Computer',     notes:'',saved:1700,target:1700},
+  {cat:'Home',  icon:'🔨', id:'sg2001',name:'Furnace',       notes:'',saved:0,   target:20000},
+  {cat:'Travel',icon:'🏖️',id:'sg2002',name:'Wolseley Bay',  notes:'',saved:0,   target:1000},
+  {cat:'Home',  icon:'🏠', id:'sg2003',name:'Living room rug',notes:'',saved:0,  target:150},
+],sgid=2003;
 
 const SAV_CATS={
   'Home':        {color:'#52cfa0',icon:'🏠'},
@@ -543,7 +551,9 @@ const HARD_BILLS=[
   {id:'mort',  name:'Mortgage',      cat:'Housing',        due:null,amt:2986,  icon:'🏦',biwk:true,biwkAmt:1492},
 ];
 
-let customBills=[],cid=1000,OVR={};
+let customBills=[
+  {amt:600,biwk:false,cat:'Other',custom:true,due:1,icon:'💸',id:'c1000',name:'Joe bills'},
+],cid=1000,OVR={};
 const mkey=(y,m)=>`${y}-${m}`;
 const getAllBills=()=>[...HARD_BILLS,...customBills];
 function getBills(y,m){const ov=OVR[mkey(y,m)]||{};return getAllBills().map(b=>({...b,amt:ov[b.id]!==undefined?ov[b.id]:b.amt}));}
@@ -592,14 +602,19 @@ function initFirebase(){
   Promise.all([
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
     import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js'),
-  ]).then(([{initializeApp},{getDatabase,ref,set,onValue}])=>{
-    const app=initializeApp(cfg),db=getDatabase(app);
+    import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js'),
+  ]).then(([{initializeApp},{getDatabase,ref,set,onValue},{getAuth,signInAnonymously}])=>{
+    const app=initializeApp(cfg);
+    const auth=getAuth(app);
+    const db=getDatabase(app);
     window._fbSet=(path,val)=>set(ref(db,path),val);
-    fbReady=true;setSyncState('live');
-    onValue(ref(db,'budget'),snap=>{
-      if(!snap.exists()||Date.now()<suppressUntil)return;
-      const d=snap.val();applySnapshot(d,d._meta);
-    });
+    signInAnonymously(auth).then(()=>{
+      fbReady=true;setSyncState('live');
+      onValue(ref(db,'budget'),snap=>{
+        if(!snap.exists()||Date.now()<suppressUntil)return;
+        const d=snap.val();applySnapshot(d,d._meta);
+      });
+    }).catch(e=>{console.error('FB auth:',e);setSyncState('error');});
   }).catch(e=>{console.error('FB init:',e);setSyncState('error');});
 }
 function setSyncState(s){
